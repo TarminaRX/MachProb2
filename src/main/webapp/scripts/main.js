@@ -1,4 +1,3 @@
-import { GetLoginBlock } from './login.js';
 import { refreshPage } from './utilities/submit.js';
 document.addEventListener('DOMContentLoaded', () => {
   const strPath = window.location.pathname;

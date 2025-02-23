@@ -1,23 +1,10 @@
+import { EmailBlock, mainFormDiv, PasswordBlock } from './components/credentials.js';
 import { default as axios } from './libs/axios.min.js';
 import van from './libs/van-1.5.3.min.js';
 import { refreshPage, requestForm, updateLastPathSegment } from './utilities/submit.js';
 const { button, div, label, input, p, a } = van.tags
 
 
-const mainFormDiv = div({ class: "space-y-4" });
-const EmailBlock = div(
-  label({ for: "email", class: "sr-only" },
-    "Email",
-  ),
-  input({ type: "email", id: "email", name: "email", class: "w-full px-4 py-2 text-gray-100 bg-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500", placeholder: "Email Address" }),
-);
-
-const PasswordBlock = div(
-  label({ for: "password", class: "sr-only" },
-    "Password",
-  ),
-  input({ type: "password", id: "password", name: "password", class: "w-full px-4 py-2 text-gray-100 bg-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500", placeholder: "Password" }),
-);
 
 /**
  * @param {HTMLFormElement} mainForm
@@ -65,8 +52,6 @@ const SignupLink = div(
       }, href: "", class: "text-blue-500"
     }, " here.")),
 );
-
-
 
 /**
  * @param {string} urlStr
