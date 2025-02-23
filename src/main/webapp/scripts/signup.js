@@ -64,7 +64,6 @@ const SignupLink = div(
 
         axios.get(nextPath).then((respo) => {
           const docu = parserDom.parseFromString(respo.data, "text/html");
-          document.body.innerHTML = '';
           document.body = docu.body
           updateLastPathSegment(nextPath);
           refreshPage(nextPath);
