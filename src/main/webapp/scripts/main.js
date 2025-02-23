@@ -1,4 +1,8 @@
-import van from './van-1.5.3.min.js';
+import { GetLoginBlock } from './login.js';
+document.addEventListener('DOMContentLoaded', () => {
+  const strPath = window.location.pathname;
+  const pathSplitted = strPath.split("/").filter(part => part !== '');
+  const locationUrl = pathSplitted[pathSplitted.length - 1];
 
-const hello = "world";
-console.log(hello);
+  GetLoginBlock(locationUrl);
+});
