@@ -5,6 +5,13 @@ const { button, div, label, input, p, a } = van.tags
 
 
 const mainFormDiv = div({ class: "space-y-4" });
+const NameBlock = div(
+  label({ for: "username", class: "sr-only" },
+    "Email",
+  ),
+  input({ type: "name", id: "username", name: "username", class: "w-full px-4 py-2 text-gray-100 bg-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500", placeholder: "Username" }),
+);
+
 const EmailBlock = div(
   label({ for: "email", class: "sr-only" },
     "Email",
@@ -22,35 +29,37 @@ const PasswordBlock = div(
 /**
  * @param {HTMLFormElement} mainForm
  */
-const SignInButton = (mainForm) => { 
+const SignUpButton = (mainForm) => {
   const mainDat = van.state({});
   van.derive(() => {
+    /** @type {MFormDataResult} */
     const mData = mainDat.val;
     if ((Object.keys(mData).length !== 0) && (typeof mData === 'string' || typeof mData == 'object')) {
       console.log(mData.data);
     }
   });
   return div(
-  button({
-    onclick: () => {
-      requestForm(mainForm).then((data) => {
-        mainDat.val = data
-      });
-    }, type: "submit", class: "w-full px-4 py-2 bg-gray-600 text-gray-100 rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500"
-  },
-    "Sign In",
-  ),
-)};
+    button({
+      onclick: () => {
+        requestForm(mainForm).then((data) => {
+          mainDat.val = data
+        });
+      }, type: "submit", class: "w-full px-4 py-2 bg-gray-600 text-gray-100 rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500"
+    },
+      "Sign Up",
+    ),
+  )
+};
 
 const SignupLink = div(
-  p({ class: "text-sm text-center text-gray-100  mb-4" }, "Don't have an account?, Signup",
+  p({ class: "text-sm text-center text-gray-100  mb-4" }, "Already have an account?, Login",
     a({
       /**
        * @param {Event} event
        */
-      onclick: async (event) => {
+      onclick: (event) => {
         event.preventDefault();
-        const nextPath = "signup.jsp";
+        const nextPath = "login.jsp";
         const parserDom = new DOMParser();
 
         axios.get(nextPath).then((respo) => {
@@ -62,7 +71,8 @@ const SignupLink = div(
         }).catch((err) => {
           console.log(err);
         });
-
+        //updateLastPathSegment(nextPath);
+        //refreshPage(nextPath);
       }, href: "", class: "text-blue-500"
     }, " here.")),
 );
@@ -72,18 +82,18 @@ const SignupLink = div(
 /**
  * @param {string} urlStr
  */
-export const GetLoginBlock = (urlStr) => {
-  if (urlStr.includes("login")) {
+export const GetSignupBlock = (urlStr) => {
+  if (urlStr.includes("signup")) {
 
     /** @type HTMLFormElement */
-    const mainForm = document.getElementById("loginForm");
+    const mainForm = document.getElementById("signupForm");
     mainFormDiv.innerHTML = '';
     mainForm.innerHTML = '';
+    van.add(mainFormDiv, NameBlock);
     van.add(mainFormDiv, EmailBlock);
     van.add(mainFormDiv, PasswordBlock);
-    van.add(mainFormDiv, SignInButton(mainForm));
+    van.add(mainFormDiv, SignUpButton(mainForm));
     van.add(mainFormDiv, SignupLink);
-
     van.add(mainForm, mainFormDiv);
   }
 }

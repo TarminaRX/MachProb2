@@ -1,5 +1,6 @@
 import { default as axios } from '../libs/axios.min.js';
 import { GetLoginBlock } from '../login.js';
+import { GetSignupBlock } from '../signup.js';
 /**
  * @param {HTMLFormElement} mainForm
  * @returns {MFormDataResult} An object with the following properties:
@@ -67,4 +68,5 @@ export function updateLastPathSegment(newValue) {
  */
 export function refreshPage(lStr) {
   GetLoginBlock(lStr);
+  GetSignupBlock(lStr);
 }
