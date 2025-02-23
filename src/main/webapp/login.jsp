@@ -5,7 +5,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <script src="scripts/libs/tailwind.css.js"></script>
     <title></title>
     <script type="module" src="scripts/main.js"></script>
     <script src="scripts/websocket.js"></script>
