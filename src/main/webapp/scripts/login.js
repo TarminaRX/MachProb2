@@ -1,6 +1,8 @@
-import { default as axios } from './libs/axios.min.js';
 import van from './libs/van-1.5.3.min.js';
+import { refreshPage, requestForm, updateLastPathSegment } from './utilities/submit.js';
 const { button, div, label, input, p, a } = van.tags
+
+
 
 const mainFormDiv = div({ class: "space-y-4" });
 const EmailBlock = div(
@@ -17,17 +19,49 @@ const PasswordBlock = div(
   input({ type: "password", id: "password", name: "password", class: "w-full px-4 py-2 text-gray-100 bg-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500", placeholder: "Password" }),
 );
 
-const SignInButton = div(
-  button({ type: "submit", class: "w-full px-4 py-2 bg-gray-600 text-gray-100 rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500" },
-    "Sign In",
-  ),
-);
-
-const SignupLink = div(
-  p({ class: "text-sm text-center text-gray-100  mb-4" }, "Don't have an account?, Signup", a({ href: "#", class: "text-blue-500" }, " here.")),
-);
 /**
  * @param {HTMLFormElement} mainForm
+ */
+const SignInButton = (mainForm) => {
+  const resultDat = van.state({});
+  van.derive(() => {
+    /** @type {MFormDataResult} */
+    const mainData = resultDat.val;
+    if (typeof mainData.data === 'object' || typeof mainData.data === 'string') {
+      console.log(mainData.data);
+    }
+  });
+  return div(
+    button({
+      onclick: () => {
+        requestForm(mainForm).then((data) => {
+          resultDat.val = data
+        });
+      }, type: "submit", class: "w-full px-4 py-2 bg-gray-600 text-gray-100 rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500"
+    },
+      "Sign In",
+    ),
+  )
+};
+
+const SignupLink = div(
+  p({ class: "text-sm text-center text-gray-100  mb-4" }, "Don't have an account?, Signup",
+    a({
+      /**
+       * @param {Event} event
+       */
+      onclick: (event) => {
+        event.preventDefault();
+        const nextPath = "signup.jsp";
+        updateLastPathSegment(nextPath);
+        refreshPage(nextPath);
+      }, href: "", class: "text-blue-500"
+    }, " here.")),
+);
+
+
+
+/**
  * @param {string} urlStr
  */
 export const GetLoginBlock = (urlStr) => {
@@ -37,35 +71,9 @@ export const GetLoginBlock = (urlStr) => {
     const mainForm = document.getElementById("loginForm");
     van.add(mainFormDiv, EmailBlock);
     van.add(mainFormDiv, PasswordBlock);
-    van.add(mainFormDiv, SignInButton);
+    van.add(mainFormDiv, SignInButton(mainForm));
     van.add(mainFormDiv, SignupLink);
     van.add(mainForm, mainFormDiv);
-    mainForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const fData = new FormData(mainForm);
-
-      /**
-       * Plain object to hold form data for logging.
-       * @type {Object<string, string>}
-       */
-      const formDataObject = {};
-      fData.forEach((value, key) => {
-        formDataObject[key] = value;
-      });
-
-      axios.post(mainForm.action, formDataObject, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      }).then((resp) => {
-        console.log(resp.data);
-      }).catch((err) => {
-        console.log(err);
-      });
-
-
-      //console.log(mainForm.action);
-      //console.log('Form data:', formDataObject);
-    });
   }
 }
+

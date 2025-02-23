@@ -7,3 +7,4 @@ target/
 .settings/
 .prettierrc
 run.sh
+tsconfig.json
