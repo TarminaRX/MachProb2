@@ -1,4 +1,5 @@
-import van from './van-1.5.3.min.js';
+import { default as axios } from './libs/axios.min.js';
+import van from './libs/van-1.5.3.min.js';
 const { button, div, label, input, p, a } = van.tags
 
 const mainFormDiv = div({ class: "space-y-4" });
@@ -51,8 +52,20 @@ export const GetLoginBlock = (urlStr) => {
       fData.forEach((value, key) => {
         formDataObject[key] = value;
       });
-      console.log('Form data:', formDataObject);
+
+      axios.post(mainForm.action, formDataObject, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }).then((resp) => {
+        console.log(resp.data);
+      }).catch((err) => {
+        console.log(err);
+      });
+
+
+      //console.log(mainForm.action);
+      //console.log('Form data:', formDataObject);
     });
   }
 }
-

@@ -15,7 +15,7 @@
     <main class="w-full max-w-lg">
       <div class="bg-neutral-800 p-6 rounded-lg shadow-lg w-full max-w-lg">
         <h2 class="text-2xl text-center text-gray-100 font-bold mb-6">Login</h2>
-        <form id="loginForm" action="login" method="post">
+        <form id="loginForm" action="api/login" method="post">
           <!--      LOGIN BLOCK HERE      -->
         </form>
       </div>
