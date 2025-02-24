@@ -1,55 +1,47 @@
 package net.rnzonly.mtwo.controllers;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import net.rnzonly.mtwo.models.ExampleModel;
+import net.rnzonly.mtwo.models.DataAccess;
+import net.rnzonly.mtwo.models.ErrorFolio;
 import net.rnzonly.mtwo.utilities.JsonConverter;
 
 @WebServlet("/api/login")
 class LoginServlet extends TemplateServlet {
-
-  class ResponseMessage {
-    private String message;
-    private Object data;
-
-    public Object getData() {
-      return data;
-    }
-
-    public void setData(Object data) {
-      this.data = data;
-    }
-
-    public String getMessage() {
-      return message;
-    }
-
-    public void setMessage(String message) {
-      this.message = message;
-    }
-  }
+  private DataAccess da = new DataAccess();
 
   @Override
   protected void processRequest(HttpServletRequest request,
-                                HttpServletResponse response)
-      throws ServletException, IOException {
+                                HttpServletResponse response) throws Exception {
 
     /* PLEASE FOLLOW FORMAT */
     response.setContentType("application/json");
     response.setCharacterEncoding("UTF-8");
     PrintWriter aba = response.getWriter();
-    ResponseMessage rm = new ResponseMessage();
+    ErrorFolio messageError = null;
 
-    rm.setMessage("Success!");
-    ExampleModel em = new ExampleModel();
-    rm.setData(em);
+    HttpSession sq = request.getSession(true);
+    if (sq.getAttribute("currentUser") != null) {
+      messageError = new ErrorFolio(true, "Can't log in twice!");
+      aba.print(JsonConverter.convertToJson(messageError));
+      return;
+    }
 
-    aba.print(JsonConverter.convertToJson(rm));
+    String emailVar = request.getParameter("email");
+    String passVar = request.getParameter("password");
+
+    messageError = da.credentialsExists(emailVar, passVar);
+
+    if (messageError.isError() == false) {
+      sq.setAttribute("currentUser", da.cachedUser());
+    }
+    aba.print(JsonConverter.convertToJson(messageError));
+
+    // aba.print(JsonConverter.convertToJson(rm));
   }
 }

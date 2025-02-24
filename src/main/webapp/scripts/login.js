@@ -9,25 +9,31 @@ const { button, div, label, input, p, a } = van.tags
 /**
  * @param {HTMLFormElement} mainForm
  */
-const SignInButton = (mainForm) => { 
+const SignInButton = (mainForm) => {
   const mainDat = van.state({});
   van.derive(() => {
+    /** @type {MFormDataResult} */
     const mData = mainDat.val;
-    if ((Object.keys(mData).length !== 0) && (typeof mData === 'string' || typeof mData == 'object')) {
-      console.log(mData.data);
+    if ((Object.keys(mData).length !== 0) && (typeof mData.data === 'string' || typeof mData.data == 'object')) {
+      /** @type {ErrorFolio} */
+      const innerData = mData.data;
+      const errBox = document.getElementById("messageBox");
+      errBox.innerHTML = '';
+      van.add(errBox, ErrorBlock(innerData.isError, innerData.message));
     }
   });
   return div(
-  button({
-    onclick: () => {
-      requestForm(mainForm).then((data) => {
-        mainDat.val = data
-      });
-    }, type: "submit", class: "w-full px-4 py-2 bg-gray-600 text-gray-100 rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500"
-  },
-    "Sign In",
-  ),
-)};
+    button({
+      onclick: () => {
+        requestForm(mainForm).then((data) => {
+          mainDat.val = data
+        });
+      }, type: "submit", class: "w-full px-4 py-2 bg-gray-600 text-gray-100 rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500"
+    },
+      "Sign In",
+    ),
+  )
+};
 
 const SignupLink = div(
   p({ class: "text-sm text-center text-gray-100  mb-4" }, "Don't have an account?, Signup",
@@ -53,6 +59,19 @@ const SignupLink = div(
     }, " here.")),
 );
 
+
+
+/**
+ * @param {boolean} err
+ * @param {string} message
+ */
+const ErrorBlock = (err, message) => {
+  const colorClass = (err) ? "bg-red-900" : "bg-green-900";
+  return div({ id: "errorAlert", class: colorClass + " text-white px-4 py-2 rounded-lg mb-4 text-sm" },
+    message,
+  )
+}
+
 /**
  * @param {string} urlStr
  */
@@ -63,6 +82,11 @@ export const GetLoginBlock = (urlStr) => {
     const mainForm = document.getElementById("loginForm");
     mainFormDiv.innerHTML = '';
     mainForm.innerHTML = '';
+
+    //const errBox = document.getElementById("errorBox");
+    //errBox.innerHTML = '';
+    //van.add(errBox, ErrorBlock());
+
     van.add(mainFormDiv, EmailBlock);
     van.add(mainFormDiv, PasswordBlock);
     van.add(mainFormDiv, SignInButton(mainForm));

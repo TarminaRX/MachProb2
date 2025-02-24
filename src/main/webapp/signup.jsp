@@ -13,6 +13,9 @@
 
   <body class="dark:bg-neutral-900 w-dvw h-dvh flex flex-col items-center justify-center min-h-screen">
     <main class="w-full max-w-lg">
+      <div id="isLogged" class="hidden">
+        ${sessionScope.currentUser != null ? "true" : "false"}
+      </div>
       <div class="bg-neutral-800 p-6 rounded-lg shadow-lg w-full max-w-lg">
         <h2 class="text-2xl text-center text-gray-100 font-bold mb-6">Register</h2>
         <form id="signupForm" action="api/signup" method="post">
