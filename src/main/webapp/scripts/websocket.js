@@ -1,4 +1,4 @@
-const setupHotReload = () => {
+var SetupHotReload = () => {
   const socket = new WebSocket(`ws://localhost:8080/WebReload/`);
   
   socket.addEventListener('message', (event) => {
@@ -15,7 +15,7 @@ const setupHotReload = () => {
   
   socket.addEventListener('close', () => {
     console.log('WebSocket connection closed. Attempting to reconnect...');
-    setTimeout(setupHotReload, 1000);
+    setTimeout(SetupHotReload, 1000);
   });
   socket.addEventListener('error', (error) => {
     console.error('WebSocket error:', error);
@@ -23,5 +23,5 @@ const setupHotReload = () => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    setupHotReload();
+    SetupHotReload();
 });

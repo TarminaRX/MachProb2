@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /** @param Event event */
   window.onpopstate = (event) => {
     if (event.state) {
-      window.location.reload(window.location.pathname);
+      window.location.href = window.location.pathname;
     }
   }
   

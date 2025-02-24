@@ -4,13 +4,13 @@ import { GetSignupBlock } from '../signup.js';
 import { SessionValid } from './session.js';
 /**
  * @param {HTMLFormElement} mainForm
- * @returns {MFormDataResult} An object with the following properties:
+ * @returns {Promise<MFormDataResult>} An object with the following properties:
  *   - `data` (string): Response body data.
  *   - `error` (boolean): If any error occured.
  */
 export function requestForm(mainForm) {
   let isError = false;
-  let dataStr;
+  let dataStr = "";
 
 
   return new Promise((resolve) => {
@@ -24,7 +24,7 @@ export function requestForm(mainForm) {
        */
       const formDataObject = {};
       fData.forEach((value, key) => {
-        formDataObject[key] = value;
+        formDataObject[key] = typeof value === "string" ? value : value.name;
       });
 
       try {

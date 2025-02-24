@@ -10,13 +10,12 @@ const { button, div, label, input, p, a } = van.tags
  * @param {HTMLFormElement} mainForm
  */
 const SignInButton = (mainForm) => {
-  const mainDat = van.state({});
+  const mainDat = van.state({ data: null, error: null });
   van.derive(() => {
     /** @type {MFormDataResult} */
     const mData = mainDat.val;
     if ((Object.keys(mData).length !== 0) && (typeof mData.data === 'string' || typeof mData.data == 'object')) {
-      /** @type {ErrorFolio} */
-      const innerData = mData.data;
+      const innerData = /** @type {ErrorFolio} */ (mData.data);
       const errBox = document.getElementById("messageBox");
       errBox.innerHTML = '';
       van.add(errBox, ErrorBlock(innerData.isError, innerData.message));
@@ -78,8 +77,7 @@ const ErrorBlock = (err, message) => {
 export const GetLoginBlock = (urlStr) => {
   if (urlStr.includes("login")) {
 
-    /** @type HTMLFormElement */
-    const mainForm = document.getElementById("loginForm");
+    const mainForm = /** @type HTMLFormElement */ (document.getElementById("loginForm"));
     mainFormDiv.innerHTML = '';
     mainForm.innerHTML = '';
 

@@ -9,7 +9,7 @@ const { button, div, label, input, p, a } = van.tags
  * @param {HTMLFormElement} mainForm
  */
 const SignUpButton = (mainForm) => {
-  const mainDat = van.state({});
+  const mainDat = van.state({data: null, error: null});
   van.derive(() => {
     /** @type {MFormDataResult} */
     const mData = mainDat.val;
@@ -63,8 +63,7 @@ const SignupLink = div(
 export const GetSignupBlock = (urlStr) => {
   if (urlStr.includes("signup")) {
 
-    /** @type HTMLFormElement */
-    const mainForm = document.getElementById("signupForm");
+    const mainForm = /** @type HTMLFormElement */ (document.getElementById("signupForm"));
     mainFormDiv.innerHTML = '';
     mainForm.innerHTML = '';
     van.add(mainFormDiv, NameBlock);
