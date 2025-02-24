@@ -32,10 +32,10 @@ class LoginServlet extends TemplateServlet {
       return;
     }
 
-    String emailVar = request.getParameter("email");
+    String usernameVar = request.getParameter("user_name");
     String passVar = request.getParameter("password");
 
-    messageError = da.credentialsExists(emailVar, passVar);
+    messageError = da.credentialsExists(usernameVar, passVar);
 
     if (messageError.isError() == false) {
       sq.setAttribute("currentUser", da.cachedUser());

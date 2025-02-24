@@ -1,27 +1,64 @@
-DROP SCHEMA IF EXISTS Folio;
-CREATE SCHEMA Folio;
-USE Folio;
+CREATE DATABASE FolioRevised;
+USE FolioRevised;
+
+-- Table to store account details
+CREATE TABLE account (
+    user_name VARCHAR(50) PRIMARY KEY,
+    password VARCHAR(255) NOT NULL,
+    user_role ENUM('user', 'admin', 'super_admin') NOT NULL
+);
+
+-- Table to store posts
+CREATE TABLE posts (
+    user_name VARCHAR(50) NOT NULL,
+    post1 VARCHAR(200),
+    post2 VARCHAR(200),
+    post3 VARCHAR(200),
+    post4 VARCHAR(200),
+    post5 VARCHAR(200),
+    FOREIGN KEY (user_name) REFERENCES account(user_name) ON DELETE CASCADE
+);
 
 
-DROP TABLE IF EXISTS Followers;
-CREATE TABLE Followers (follower_id bigint unsigned NOT NULL, following_id bigint unsigned NOT NULL, followed_at timestamp DEFAULT CURRENT_TIMESTAMP NULL, PRIMARY KEY (follower_id, following_id), INDEX following_id (following_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_0900_ai_ci;
-INSERT INTO Followers (follower_id, following_id, followed_at) VALUES (1, 2, '2025-02-24 09:40:36');
-INSERT INTO Followers (follower_id, following_id, followed_at) VALUES (1, 3, '2025-02-24 09:40:36');
-INSERT INTO Followers (follower_id, following_id, followed_at) VALUES (2, 3, '2025-02-24 09:40:36');
-INSERT INTO Followers (follower_id, following_id, followed_at) VALUES (3, 1, '2025-02-24 09:40:36');
-INSERT INTO Followers (follower_id, following_id, followed_at) VALUES (4, 1, '2025-02-24 09:40:36');
-DROP TABLE IF EXISTS Posts;
-CREATE TABLE Posts (post_id bigint unsigned NOT NULL AUTO_INCREMENT, user_id bigint unsigned NOT NULL, content text NOT NULL, created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL, updated_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NULL, PRIMARY KEY (post_id), CONSTRAINT post_id UNIQUE (post_id), INDEX user_id (user_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_0900_ai_ci;
-INSERT INTO Posts (post_id, user_id, content, created_at, updated_at) VALUES (1, 1, 'Alice\'s first post!', '2025-02-24 09:40:36', '2025-02-24 09:40:36');
-INSERT INTO Posts (post_id, user_id, content, created_at, updated_at) VALUES (2, 2, 'Bob is here!', '2025-02-24 09:40:36', '2025-02-24 09:40:36');
-INSERT INTO Posts (post_id, user_id, content, created_at, updated_at) VALUES (3, 3, 'Charlie\'s insights on life.', '2025-02-24 09:40:36', '2025-02-24 09:40:36');
-INSERT INTO Posts (post_id, user_id, content, created_at, updated_at) VALUES (4, 4, 'Dave writes his first post about admin stuff.', '2025-02-24 09:40:36', '2025-02-24 09:40:36');
-DROP TABLE IF EXISTS Users;
-CREATE TABLE Users (user_id bigint unsigned NOT NULL AUTO_INCREMENT, username varchar(50) NOT NULL, email varchar(100) NOT NULL, password varchar(255) NOT NULL, role enum('user','admin','super_admin') DEFAULT 'user', created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL, updated_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NULL, PRIMARY KEY (user_id), CONSTRAINT user_id UNIQUE (user_id), CONSTRAINT username UNIQUE (username), CONSTRAINT email UNIQUE (email)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_0900_ai_ci;
-INSERT INTO Users (user_id, username, email, password, role, created_at, updated_at) VALUES (1, 'alice', 'alice@example.com', 'hashed_password_1', 'user', '2025-02-24 09:40:36', '2025-02-24 09:40:36');
-INSERT INTO Users (user_id, username, email, password, role, created_at, updated_at) VALUES (2, 'bob', 'bob@example.com', 'hashed_password_2', 'admin', '2025-02-24 09:40:36', '2025-02-24 09:40:36');
-INSERT INTO Users (user_id, username, email, password, role, created_at, updated_at) VALUES (3, 'charlie', 'charlie@example.com', 'hashed_password_3', 'user', '2025-02-24 09:40:36', '2025-02-24 09:40:36');
-INSERT INTO Users (user_id, username, email, password, role, created_at, updated_at) VALUES (4, 'dave', 'dave@example.com', 'hashed_password_4', 'super_admin', '2025-02-24 09:40:36', '2025-02-24 09:40:36');
-ALTER TABLE `Followers` ADD FOREIGN KEY (`follower_id`) REFERENCES `Users` (`user_id`) ON DELETE CASCADE;
-ALTER TABLE `Followers` ADD FOREIGN KEY (`following_id`) REFERENCES `Users` (`user_id`) ON DELETE CASCADE;
-ALTER TABLE `Posts` ADD FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`) ON DELETE CASCADE;
+-- Table to store user following relationships
+CREATE TABLE follows (
+    user_name VARCHAR(50) NOT NULL,
+    follow1 VARCHAR(50),
+    follow2 VARCHAR(50),
+    follow3 VARCHAR(50),
+    FOREIGN KEY (user_name) REFERENCES account(user_name) ON DELETE CASCADE
+);
+
+
+-- Insert test data for accounts
+INSERT INTO account (user_name, password, user_role) VALUES
+('john_doe', 'hash123', 'user'),
+('jane_smith', 'hash456', 'user'),
+('bob_wilson', 'hash789', 'user'),
+('alice_brown', 'hashABC', 'user'),
+('sarah_lee', 'hashDEF', 'user'),
+('admin_mike', 'hashXYZ', 'admin'),
+('admin_lisa', 'hash999', 'admin'),
+('super_james', 'hash000', 'super_admin'),
+('emma_white', 'hash111', 'user'),
+('tom_green', 'hash222', 'user');
+
+-- Insert test data for posts
+INSERT INTO posts (user_name, post1, post2, post3, post4, post5) VALUES
+('john_doe', 'Hello world!', 'Having a great day!', 'Love this platform', NULL, NULL),
+('jane_smith', 'New to this platform', 'Making friends here', NULL, NULL, NULL),
+('bob_wilson', 'Check out my new photo', 'Weekend vibes', 'Party time!', 'Good morning everyone', NULL),
+('alice_brown', 'First post here', NULL, NULL, NULL, NULL),
+('sarah_lee', 'Cooking new recipe', 'Food pics coming soon', 'Restaurant review', NULL, NULL),
+('emma_white', 'Travel diary day 1', 'Beautiful sunset', 'Missing home', 'New adventures', 'Last day of vacation'),
+('tom_green', 'Sports fan here', 'Game day!', NULL, NULL, NULL);
+
+-- Insert test data for follows (only for users)
+INSERT INTO follows (user_name, follow1, follow2, follow3) VALUES
+('john_doe', 'jane_smith', 'bob_wilson', 'alice_brown'),
+('jane_smith', 'john_doe', 'sarah_lee', 'emma_white'),
+('bob_wilson', 'john_doe', 'tom_green', NULL),
+('alice_brown', 'sarah_lee', NULL, NULL),
+('sarah_lee', 'emma_white', 'alice_brown', 'jane_smith'),
+('emma_white', 'sarah_lee', 'jane_smith', NULL),
+('tom_green', 'bob_wilson', 'john_doe', NULL);

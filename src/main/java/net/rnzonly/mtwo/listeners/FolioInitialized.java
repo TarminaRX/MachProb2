@@ -44,7 +44,7 @@ public class FolioInitialized implements ServletContextListener {
     try {
       Class.forName("com.mysql.cj.jdbc.Driver");
       String mainUrl = "jdbc:mysql://localhost:3306/"
-          + "Folio?useSSL=false&allowPublicKeyRetrieval=true";
+          + "FolioRevised?useSSL=false&allowPublicKeyRetrieval=true";
       return DriverManager.getConnection(mainUrl, "root", "root");
     } catch (Exception e) {
       logger.severe("Database connection error: " + e.getMessage());

@@ -1,35 +1,24 @@
 package net.rnzonly.mtwo.models;
 
-import java.math.BigInteger;
-
 public class UserFolio {
-  private BigInteger user_id;
-  private String username, email, password;
-  private UserRole role;
+  private String user_name, password;
+  private UserRole user_role;
 
-  public UserFolio(BigInteger user_id, String username, String email, String password, String role) {
-    this.user_id = user_id;
-    this.username = username;
-    this.email = email;
+  public UserFolio(String username, String password, String user_role) {
+    this.user_name = username;
     this.password = password;
-    this.role = UserRole.fromString(role);
+    this.user_role = UserRole.fromString(user_role);
   }
 
-  public BigInteger user_id() { return user_id; }
-
-  public String username() { return username; }
-
-  public String email() { return email; }
+  public String user_name() { return user_name; }
 
   public String password() { return password; }
 
-  public String role() { return role.value(); }
+  public String user_role() { return user_role.value(); }
 
-  public void role(String urole) { role = UserRole.fromString(urole); }
+  public void user_role(String urole) { user_role = UserRole.fromString(urole); }
 
-  public void username(String newName) { username = newName; }
-
-  public void email(String newEmail) { email = newEmail; }
+  public void user_name(String newName) { user_name = newName; }
 
   public void password(String newPassword) { password = newPassword; }
 }
