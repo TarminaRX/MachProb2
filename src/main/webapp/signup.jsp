@@ -18,6 +18,8 @@
       </div>
       <div class="bg-neutral-800 p-6 rounded-lg shadow-lg w-full max-w-lg">
         <h2 class="text-2xl text-center text-gray-100 font-bold mb-6">Register</h2>
+        <div id="messageBox">
+        </div>
         <form id="signupForm" action="api/signup" method="post">
           <!--      SIGNUP BLOCK HERE      -->
         </form>

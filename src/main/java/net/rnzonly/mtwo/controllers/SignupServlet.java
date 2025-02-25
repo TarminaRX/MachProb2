@@ -11,8 +11,8 @@ import net.rnzonly.mtwo.models.DataAccess;
 import net.rnzonly.mtwo.models.ErrorFolio;
 import net.rnzonly.mtwo.utilities.JsonConverter;
 
-@WebServlet("/api/login")
-class LoginServlet extends TemplateServlet {
+@WebServlet("/api/signup")
+class RegisterServlet extends TemplateServlet {
   private DataAccess da = new DataAccess();
 
   @Override
@@ -34,14 +34,17 @@ class LoginServlet extends TemplateServlet {
 
     String usernameVar = request.getParameter("user_name");
     String passVar = request.getParameter("password");
+    String passConfirm = request.getParameter("password2");
 
-    messageError = da.credentialsExists(usernameVar, passVar);
+    if (!passVar.equals(passConfirm)) {
+      messageError = new ErrorFolio(true, "Password doesn't match.");
+      aba.print(JsonConverter.convertToJson(messageError));
+      return;
+    }
+    
+    messageError = da.registerUser(usernameVar, passVar, "user");
 
     if (messageError.isError() == false) {
-      //aba.print(JsonConverter.convertToJson(da.cachedUser()));
-      //PostFolio temp = da.getUserPosts(da.cachedUser().user_name());
-      //aba.println(da.getUserPosts("alex_green").getLatestPost());
-      //return;
       sq.setAttribute("currentUser", da.cachedUser());
     }
     aba.print(JsonConverter.convertToJson(messageError));
