@@ -53,7 +53,7 @@
 
         <!-- Post composer -->
         <!-- Posts feed - the only scrollable area -->
-        <div class="overflow-y-auto flex-1">
+        <div id="postFeedCont" class="overflow-y-auto flex-1">
           <!-- Post 1 -->
           <article
             class="border-b border-neutral-800 p-4 hover:bg-neutral-800/50 transition cursor-pointer"

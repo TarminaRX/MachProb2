@@ -1,3 +1,4 @@
+import { PostBlock } from './components/blocks.js';
 import { AsideBlock } from './components/navigation.js';
 import van from './libs/van-1.5.3.min.js';
 
@@ -17,6 +18,9 @@ export const GetLandingBlock = (urlStr) => {
       //console.log(savedNodes[i].nodeName === "MAIN");
       mainDiv.appendChild(savedNodes[i]);
     }
+
+    const postFeedCon = document.getElementById("postFeedCont");
+    van.add(postFeedCon, PostBlock("Test User", "test message"));
 
   }
 }

@@ -30,16 +30,24 @@ export const AsideBlock = (user_name, select_mode) => {
  * @param {string} user_name
  */
 const SideBarUser = (user_name) => {
-  const firstLetter = user_name.charAt(0).toUpperCase();
   return div({ class: "flex items-center" },
-    div({ class: "bg-neutral-700 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold" },
-      firstLetter,
-    ),
+    PicUser(user_name, ""),
     div({ class: "ml-3" },
       div({ class: "font-bold" },
         user_name,
       ),
     ),
+  )
+};
+
+/**
+ * @param {string} uname 
+ * @param {string} additional_class
+ */
+export const PicUser = (uname, additional_class) => {
+  const firstLetter = uname.charAt(0).toUpperCase();
+  return div({ class: "bg-neutral-700 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold " + additional_class },
+    firstLetter
   )
 };
 
