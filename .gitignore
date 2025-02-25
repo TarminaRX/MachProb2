@@ -8,3 +8,4 @@ target/
 .prettierrc
 run.sh
 tsconfig.json
+vite.config.js

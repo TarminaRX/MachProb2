@@ -1,3 +1,4 @@
+import { GetLandingBlock } from '../landing.js';
 import { default as axios } from '../libs/axios.min.js';
 import { GetLoginBlock } from '../login.js';
 import { GetSignupBlock } from '../signup.js';
@@ -71,4 +72,5 @@ export function refreshPage(lStr) {
   SessionValid(lStr);
   GetLoginBlock(lStr);
   GetSignupBlock(lStr);
+  GetLandingBlock(lStr);
 }

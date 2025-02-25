@@ -1,12 +1,10 @@
 package net.rnzonly.mtwo.controllers;
 
 import java.io.PrintWriter;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import net.rnzonly.mtwo.models.DataAccess;
 import net.rnzonly.mtwo.models.ErrorFolio;
 import net.rnzonly.mtwo.utilities.JsonConverter;
