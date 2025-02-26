@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import net.rnzonly.mtwo.models.DataAccess;
+import net.rnzonly.mtwo.models.FollowFolio;
 import net.rnzonly.mtwo.models.ErrorFolio;
 import net.rnzonly.mtwo.models.UserFolio;
 import net.rnzonly.mtwo.models.UserMessage;
@@ -14,6 +15,7 @@ import net.rnzonly.mtwo.utilities.JsonConverter;
 @WebServlet("/api/follow")
 class FollowServlet extends TemplateServlet {
   private DataAccess da = new DataAccess();
+  private FollowFolio ff = new FollowFolio();
 
   @Override
   protected void processRequest(HttpServletRequest request,
@@ -35,15 +37,10 @@ class FollowServlet extends TemplateServlet {
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
     String[] followsArray = currUser.follows().toArray();
     UserMessage[] um = new UserMessage[3];
+    
 
-    for (int is = 0; is < followsArray.length; is++) {
-      String followedUser = followsArray[is];
-      if (followedUser != null) {
-        String followedUmessage = da.getUserPosts(followedUser).getLatestPost();
-        UserMessage completeMessage =
-            new UserMessage(followedUser, followedUmessage);
-        um[is] = completeMessage;
-      }
+    if("follow".equals(action)){
+
     }
 
     aba.print(JsonConverter.convertToJson(um));
