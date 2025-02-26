@@ -37,10 +37,15 @@ class FollowServlet extends TemplateServlet {
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
     String[] followsArray = currUser.follows().toArray();
     UserMessage[] um = new UserMessage[3];
-    
+
+    //Placeholder kase wala pa gawa si Brandy
+    String action = request.getParameter("action"); // action=follow = return follow;
+    String username = request.getParameter("user_name");
 
     if("follow".equals(action)){
-
+      ff.followUser(username);
+    }else if("unfollow".equals(action)){
+      ff.unfollowUser(username);
     }
 
     aba.print(JsonConverter.convertToJson(um));
