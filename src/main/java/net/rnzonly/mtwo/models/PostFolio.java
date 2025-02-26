@@ -72,29 +72,33 @@ public class PostFolio {
 
   public ErrorFolio newPost(String mess) {
     String[] cPosts = toArray();
-    for (int ix = 0; ix < cPosts.length; ix++) {
-      if (cPosts[ix] == null) {
+    for (int ix = cPosts.length - 1; ix > -1; ix--) {
+      if (cPosts[ix] != null || ix == -1) {
         switch (ix) {
-          case 0:
+          case -1:
             post1 = mess;
             break;
-          case 1:
+          case 0:
             post2 = mess;
             break;
-          case 2:
+          case 1:
             post3 = mess;
             break;
-          case 3:
+          case 2:
             post4 = mess;
             break;
+          case 3:
+            post5 = mess;
+            break;
           case 4:
+            deletePost("0");
             post5 = mess;
             break;
         }
         return new ErrorFolio(false, "Successfully made a new post!");
-      } 
+      }
     }
-    return new ErrorFolio(true, "Maximum posts reached!");
+    return new ErrorFolio(true, "Maximum posts reached! First post will be deleted.");
   }
 
 
