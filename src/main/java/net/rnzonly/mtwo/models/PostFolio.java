@@ -20,8 +20,7 @@ public class PostFolio {
   }
 
   public String[] toArray() {
-    String placeholder6 = null;
-    String[] buf = {post1, post2, post3, post4, post5, placeholder6};
+    String[] buf = {post1, post2, post3, post4, post5};
     return buf;
   }
 
@@ -59,7 +58,7 @@ public class PostFolio {
     
     if (position == -1){
       return new ErrorFolio(true, "Post not found!");
-      
+
     }else if (position >= 0 && position <= 4){
       post1 = post2;
       post2 = post3;
@@ -98,16 +97,12 @@ public class PostFolio {
           case 4:
             post5 = mess;
             break;
-          case 5:
-            deletePost("0");
-            post5 = mess;
-            break;
         }
         return new ErrorFolio(false, "Successfully made a new post!");
       }
     }
+    deletePost("0");
+    post5 = mess;
     return new ErrorFolio(true, "Maximum posts reached! First post deleted.");
   }
-
-
 }
