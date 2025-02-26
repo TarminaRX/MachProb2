@@ -9,6 +9,7 @@
     <title></title>
     <script type="module" src="scripts/main.js"></script>
     <script src="scripts/websocket.js"></script>
+    <link rel="stylesheet" href="custom/global.css" />
   </head>
 
   <body class="dark:bg-neutral-900 w-dvw h-dvh flex flex-col items-center justify-center min-h-screen">
