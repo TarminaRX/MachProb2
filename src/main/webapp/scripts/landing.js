@@ -1,5 +1,7 @@
 import { PostBlock } from './components/blocks.js';
 import { AsideBlock } from './components/navigation.js';
+import { BASE_URL_SITE } from './globals.js';
+import { default as axios } from './libs/axios.min.js';
 import van from './libs/van-1.5.3.min.js';
 
 /**
@@ -20,7 +22,17 @@ export const GetLandingBlock = (urlStr) => {
     }
 
     const postFeedCon = document.getElementById("postFeedCont");
-    van.add(postFeedCon, PostBlock("Test User", "test message"));
+    //van.add(postFeedCon, PostBlock("Test User", "test message"));
+
+    axios.post(BASE_URL_SITE + "/api/feed", {}, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }).then((response) => {
+      console.log(response);
+    }).catch((err) => {
+      console.log(err);
+    });
 
   }
 }
