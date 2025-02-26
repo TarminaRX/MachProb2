@@ -5,7 +5,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Folio Home</title>
+    <title>Folio Profile</title>
     <script src="scripts/libs/tailwind.css.js"></script>
     <script type="module" src="scripts/main.js"></script>
     <script src="scripts/websocket.js"></script>

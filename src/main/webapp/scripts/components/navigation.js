@@ -9,7 +9,7 @@ const { circle, path, svg } = van.tags("http://www.w3.org/2000/svg");
 export const AsideBlock = (user_name, select_mode) => {
   return aside(
     // company name
-    { id: "sidebar", class: "hidden lg:flex flex-col w-64 border-r border-neutral-800 p-4 h-full sticky top-0 overflow-y-auto" },
+    { id: "sidebar", class: "hidden lg:flex flex flex-col w-64 border-r border-neutral-800 p-4 h-full sticky top-0 overflow-y-auto" },
     div({ class: "text-2xl font-bold mb-8" },
       "Folio",
     ),
@@ -19,6 +19,7 @@ export const AsideBlock = (user_name, select_mode) => {
     button({ class: "mt-6 w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full transition" },
       "Post",
     ),
+    div({class: "flex-1"}),
     //username
     div({ class: "mt-auto border-t border-neutral-800 pt-4" },
       SideBarUser(user_name)

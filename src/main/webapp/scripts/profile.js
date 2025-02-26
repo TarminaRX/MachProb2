@@ -7,8 +7,8 @@ import van from './libs/van-1.5.3.min.js';
 /**
  * @param {string} urlStr
  */
-export const GetLandingBlock = (urlStr) => {
-  if (urlStr.includes("landing")) {
+export const GetProfileBlock = (urlStr) => {
+  if (urlStr.includes("profile")) {
     const mainDiv = document.getElementById("mainContainer");
     const childMainDiv = mainDiv.children;
     const savedNodes = Array.from(childMainDiv);
@@ -16,8 +16,6 @@ export const GetLandingBlock = (urlStr) => {
     van.add(mainDiv, AsideBlock("username", "home"));
 
     for (let i = 0; i < savedNodes.length; i++) {
-      //console.log(savedNodes[i]);
-      //console.log(savedNodes[i].nodeName === "MAIN");
       mainDiv.appendChild(savedNodes[i]);
     }
 

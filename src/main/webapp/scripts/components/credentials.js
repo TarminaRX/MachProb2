@@ -1,5 +1,5 @@
 import van from '../libs/van-1.5.3.min.js';
-import { sleepSec } from '../utilities/helper.js';
+import { silentReload, sleepSec } from '../utilities/helper.js';
 import { requestForm } from '../utilities/submit.js';
 const { button, div, label, input } = van.tags
 
@@ -43,7 +43,7 @@ export const SignButton = (mainForm, textInner) => {
 
       if (innerData.isError === false) {
         sleepSec(2).then(() => {
-          window.location.href = window.location.pathname;
+          silentReload("landing.jsp");
         });
       }
     }

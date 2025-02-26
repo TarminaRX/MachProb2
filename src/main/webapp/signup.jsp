@@ -6,7 +6,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="scripts/libs/tailwind.css.js"></script>
-    <title></title>
+    <title>Folio Signup</title>
     <script type="module" src="scripts/main.js"></script>
     <script src="scripts/websocket.js"></script>
     <link rel="stylesheet" href="custom/global.css" />
