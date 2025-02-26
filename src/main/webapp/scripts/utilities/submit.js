@@ -1,22 +1,22 @@
 import { GetLandingBlock } from '../landing.js';
 import { default as axios } from '../libs/axios.min.js';
 import { GetLoginBlock } from '../login.js';
+import { GetProfileBlock } from '../profile.js';
 import { GetSignupBlock } from '../signup.js';
 import { SessionValid } from './session.js';
 /**
  * @param {HTMLFormElement} mainForm
+ * @param {string} customUrl
  * @returns {Promise<MFormDataResult>} An object with the following properties:
  *   - `data` (string): Response body data.
  *   - `error` (boolean): If any error occured.
  */
-export function requestForm(mainForm) {
+export function requestForm(mainForm, customUrl = "") {
   let isError = false;
   let dataStr = "";
 
 
-  return new Promise((resolve) => {
-    mainForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
+  return new Promise(async (resolve) => {
       const fData = new FormData(mainForm);
 
       /**
@@ -29,7 +29,8 @@ export function requestForm(mainForm) {
       });
 
       try {
-        const resp = await axios.post(mainForm.action, formDataObject, {
+        const urlPut = (customUrl.length !== 0) ? customUrl : mainForm.action;
+        const resp = await axios.post(urlPut, formDataObject, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           }
@@ -43,8 +44,6 @@ export function requestForm(mainForm) {
         data: dataStr,
         error: isError
       });
-
-    });
   });
 };
 
@@ -73,4 +72,5 @@ export function refreshPage(lStr) {
   GetLoginBlock(lStr);
   GetSignupBlock(lStr);
   GetLandingBlock(lStr);
+  GetProfileBlock(lStr);
 }

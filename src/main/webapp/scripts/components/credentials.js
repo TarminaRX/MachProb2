@@ -50,7 +50,8 @@ export const SignButton = (mainForm, textInner) => {
   });
   return div(
     button({
-      onclick: () => {
+      onclick: /** @param {Event} event */ (event) => {
+        event.preventDefault();
         requestForm(mainForm).then((data) => {
           mainDat.val = data
         });
