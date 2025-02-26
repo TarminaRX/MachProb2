@@ -57,16 +57,23 @@ public class PostFolio {
         }
     }
     
-    if (position == -1) 
+    if (position == -1){
       return new ErrorFolio(true, "Post not found!");
-    
-    switch (position) {
-        case 0: post1 = post2; 
-        case 1: post2 = post3;
-        case 2: post3 = post4;
-        case 3: post4 = post5;
-        case 4: post5 = null;
+      
+    }else if (position >= 0 && position <= 4){
+      post1 = post2;
+      post2 = post3;
+      post3 = post4;
+      post4 = post5;
+      post5 = null;
     }
+    // switch (position) {
+    //     case 0: post1 = post2; 
+    //     case 1: post2 = post3;
+    //     case 2: post3 = post4;
+    //     case 3: post4 = post5;
+    //     case 4: post5 = null;
+    // }
     
     return new ErrorFolio(false, "Successfully deleted post!");
   }
