@@ -62,16 +62,16 @@ class FollowServlet extends TemplateServlet {
     ErrorFolio result = null;
 
     if("follow".equals(action)){
-      boolean alr = false;
-      for (String follow : followsArray){
-        if(follow != null && follow.equalsIgnoreCase(username)){
-          alr = true;
-          break;
-        }
-      }
-      if(alr = true){
-        result = new ErrorFolio(true, "You are already following " + username);
-      }else{
+      // boolean alr = false;
+      // for (String follow : followsArray){
+      //   if(follow != null && follow.equalsIgnoreCase(username)){
+      //     alr = true;
+      //     break;
+      //   }
+      // }
+      // if(alr = true){
+      //   result = new ErrorFolio(true, "You are already following " + username);
+      // }else{
         FollowFolio updateF = da.updateUserFollows(currUser.user_name(), username);
         if(updateF != null){
           currUser.follows(updateF);
@@ -79,8 +79,7 @@ class FollowServlet extends TemplateServlet {
         }else{
           result = new ErrorFolio(true, "You have reached the maximum follow limit!");
         }
-      }
-      ff.followUser(username);
+      //}
     }else if("unfollow".equals(action)){
       FollowFolio updateF = da.removeUserFollow(currUser.user_name(), username);
       currUser.follows(updateF);
