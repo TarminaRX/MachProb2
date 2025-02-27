@@ -65,6 +65,44 @@ public class DataAccess {
     return null;
   }
 
+  public FollowFolio updateUserFollows(String uname, String ufName) throws Exception{
+    FollowFolio currentF = getUserFollows(uname);
+    String [] follows = currentF.toArray();
+
+    for(int i = 0; i < follows.length; i++){
+      if(follows[i] == null){
+        String column = "follow" + (i + 1);
+        pst = localcon.prepareStatement("update follows set" + column + " = ? where user_name = ?" );
+        pst.setString(1, ufName);
+        pst.setString(2, uname);
+        pst.executeUpdate();
+        return new FollowFolio(follows[0], follows[1], follows[2]);
+      }
+    }
+    return null;
+  }
+
+  public FollowFolio removeUserFollow(String uname, String uFname) throws Exception{
+    FollowFolio currentF = getUserFollows(uname);
+    String [] follows = currentF.toArray();
+    int indextoRemove = -1;
+
+    for(int i = 0; i < follows.length; i++){
+      if(uFname.equalsIgnoreCase(follows[i])){
+        indextoRemove = i;
+        break;
+      }
+    }
+    if(indextoRemove == -1){
+      return currentF;
+    }
+    String column = "follow" + (indextoRemove + 1);
+    pst = localcon.prepareStatement("update follow set" + column + " = NULL where user_name = ?");
+    pst.setString(1, uname);
+    pst.executeUpdate();
+    return new FollowFolio(follows[0], follows[1], follows[2]);
+  }  
+
   public PostFolio getUserPosts(String uname) throws Exception {
     pst = localcon.prepareStatement("select * from posts WHERE user_name = ?");
     pst.setString(1, uname);
