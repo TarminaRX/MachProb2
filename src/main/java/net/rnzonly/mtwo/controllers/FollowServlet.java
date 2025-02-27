@@ -43,7 +43,7 @@ class FollowServlet extends TemplateServlet {
     String username = request.getParameter("user_name");
 
     if(action == null || username == null){
-      messageError = new ErrorFolio(true, "Invalid lang");
+      messageError = new ErrorFolio(true, "Invalid parameter provided!");
       aba.print(JsonConverter.convertToJson(messageError));
       return;
     }
@@ -53,6 +53,7 @@ class FollowServlet extends TemplateServlet {
       aba.print(JsonConverter.convertToJson(messageError));
       return;
     }
+    
     if(!da.checkIfUserExists(username)){
       messageError = new ErrorFolio(true, "User does not exist!");
       aba.print(JsonConverter.convertToJson(messageError));
@@ -60,26 +61,25 @@ class FollowServlet extends TemplateServlet {
     }
 
     ErrorFolio result = null;
-
     if("follow".equals(action)){
-      // boolean alr = false;
-      // for (String follow : followsArray){
-      //   if(follow != null && follow.equalsIgnoreCase(username)){
-      //     alr = true;
-      //     break;
-      //   }
-      // }
-      // if(alr = true){
-      //   result = new ErrorFolio(true, "You are already following " + username);
-      // }else{
+      boolean alr = false;
+      for (String follow : followsArray){
+        if(follow != null && follow.equalsIgnoreCase(username)){
+          alr = true;
+          break;
+        }
+      }
+      if(alr){
+        result = new ErrorFolio(true, "You are already following " + username);
+      }else{
         FollowFolio updateF = da.updateUserFollows(currUser.user_name(), username);
-        if(updateF != null){
+        if(updateF == null){
           currUser.follows(updateF);
           result = new ErrorFolio(false, "Successfully followed " + username);
         }else{
           result = new ErrorFolio(true, "You have reached the maximum follow limit!");
         }
-      //}
+      }
     }else if("unfollow".equals(action)){
       FollowFolio updateF = da.removeUserFollow(currUser.user_name(), username);
       currUser.follows(updateF);
@@ -90,7 +90,6 @@ class FollowServlet extends TemplateServlet {
 
     sq.setAttribute("currentUser", currUser);
     aba.print(JsonConverter.convertToJson(result));
-
 
     // aba.print(JsonConverter.convertToJson(um));
 
