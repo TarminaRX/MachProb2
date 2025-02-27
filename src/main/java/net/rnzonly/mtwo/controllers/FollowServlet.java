@@ -15,7 +15,6 @@ import net.rnzonly.mtwo.utilities.JsonConverter;
 @WebServlet("/api/follow")
 class FollowServlet extends TemplateServlet {
   private DataAccess da = new DataAccess();
-  private FollowFolio ff = new FollowFolio();
 
   @Override
   protected void processRequest(HttpServletRequest request,
@@ -53,7 +52,7 @@ class FollowServlet extends TemplateServlet {
       aba.print(JsonConverter.convertToJson(messageError));
       return;
     }
-    
+
     if(!da.checkIfUserExists(username)){
       messageError = new ErrorFolio(true, "User does not exist!");
       aba.print(JsonConverter.convertToJson(messageError));
