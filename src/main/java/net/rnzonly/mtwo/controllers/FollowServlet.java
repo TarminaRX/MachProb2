@@ -34,11 +34,9 @@ class FollowServlet extends TemplateServlet {
     }
 
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
-    FollowFolio userF = currUser.follows();
-    String[] followsArray = userF.toArray();
+    String[] followsArray = currUser.follows().toArray();
 
-    //Placeholder kase wala pa gawa si Brandy
-    String action = request.getParameter("action"); // action=follow = return follow;
+    String action = request.getParameter("action");
     String username = request.getParameter("user_name");
 
     if(action == null || username == null){
@@ -61,22 +59,19 @@ class FollowServlet extends TemplateServlet {
 
     ErrorFolio result = null;
     if("follow".equals(action)){
-      boolean alr = false;
       for (String follow : followsArray){
         if(follow != null && follow.equalsIgnoreCase(username)){
-          alr = true;
+          result = new ErrorFolio(true, "You are already following " + username);
           break;
-        }
-      }
-      if(alr){
-        result = new ErrorFolio(true, "You are already following " + username);
-      }else{
-        FollowFolio updateF = da.updateUserFollows(currUser.user_name(), username);
-        if(updateF == null){
-          currUser.follows(updateF);
-          result = new ErrorFolio(false, "Successfully followed " + username);
         }else{
-          result = new ErrorFolio(true, "You have reached the maximum follow limit!");
+          FollowFolio updateF = da.updateUserFollows(currUser.user_name(), username);
+          if(updateF != null){
+            currUser.follows(updateF);
+            result = new ErrorFolio(false, "Successfully followed " + username);
+          }else{
+            result = new ErrorFolio(true, "You have reached the maximum follow limit!");
+          }
+          break;
         }
       }
     }else if("unfollow".equals(action)){

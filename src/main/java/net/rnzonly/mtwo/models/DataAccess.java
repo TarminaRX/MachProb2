@@ -72,7 +72,7 @@ public class DataAccess {
     for(int i = 0; i < follows.length; i++){
       if(follows[i] == null){
         String column = "follow" + (i + 1);
-        pst = localcon.prepareStatement("update follows set" + column + " = ? where user_name = ?" );
+        pst = localcon.prepareStatement("update follows set " + column + " = ? where user_name = ?");
         pst.setString(1, ufName);
         pst.setString(2, uname);
         pst.executeUpdate();
@@ -95,13 +95,22 @@ public class DataAccess {
     }
     if(indextoRemove == -1){
       return currentF;
+    }else{
+      String column = "follow" + (indextoRemove + 1);
+      pst = localcon.prepareStatement("update follows set " + column + " = NULL where user_name = ?");
+      pst.setString(1, uname);
+      pst.executeUpdate();
+      return new FollowFolio(follows[0], follows[1], follows[2]);
     }
-    String column = "follow" + (indextoRemove + 1);
-    pst = localcon.prepareStatement("update follow set" + column + " = NULL where user_name = ?");
-    pst.setString(1, uname);
+  }
+  
+  public ErrorFolio deleteUser(String username) throws Exception{
+    pst = localcon.prepareStatement("delete from account where user_name = ?");
+    pst.setString(1, username);
     pst.executeUpdate();
-    return new FollowFolio(follows[0], follows[1], follows[2]);
-  }  
+
+    return null;
+  }
 
   public PostFolio getUserPosts(String uname) throws Exception {
     pst = localcon.prepareStatement("select * from posts WHERE user_name = ?");
