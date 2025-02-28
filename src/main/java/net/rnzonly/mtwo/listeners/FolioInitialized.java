@@ -3,16 +3,20 @@ package net.rnzonly.mtwo.listeners;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import net.rnzonly.mtwo.models.SupportMessage;
+
 @WebListener
 public class FolioInitialized implements ServletContextListener {
   private static Connection msqlcon;
   private static final Logger logger = Logger.getLogger(FolioInitialized.class.getName());
+  private static ArrayList<SupportMessage> spMessages;
 
   public static Connection getMsqlcon() {
     return msqlcon;
@@ -26,6 +30,7 @@ public class FolioInitialized implements ServletContextListener {
     } else {
       logger.severe("Failed to establish database connection.");
     }
+    spMessages = new ArrayList<>();
   }
 
   @Override
@@ -38,6 +43,10 @@ public class FolioInitialized implements ServletContextListener {
         logger.severe("Error closing connection: " + e.getMessage());
       }
     }
+  }
+
+  public static ArrayList<SupportMessage> spMessages() {
+    return spMessages;
   }
 
   public static Connection initializeConnection() {

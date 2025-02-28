@@ -70,7 +70,7 @@ export function updateLastPathSegment(newValue) {
  * @param {string} lStr
  */
 export function refreshPage(lStr) {
-  SessionValid(lStr);
+  //SessionValid(lStr);
   GetLoginBlock(lStr);
   GetSignupBlock(lStr);
   GetLandingBlock(lStr);

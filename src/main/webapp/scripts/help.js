@@ -24,7 +24,7 @@ export const GetHelpBlock = (urlStr) => {
     //
     getUserObject().then((resp) => {
       userName.val = resp.user_name;
-      van.add(hMain, GetHelpForm(userName.val));
+      van.add(hMain, GetHelpForm());
     });
 
 

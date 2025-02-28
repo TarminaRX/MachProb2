@@ -5,13 +5,9 @@ import { requestForm } from '../utilities/submit.js';
 const { button, div, form, label, textarea, input } = van.tags
 
 
-/**
- * @param {string} username
- */
-export const GetHelpForm = (username) => {
+export const GetHelpForm = () => {
   return div({ id: "helpBlock", class: "bg-neutral-800 rounded-xl p-6 mb-6" },
     form({ action: "api/support", id: "helpForm" },
-      input({ name: "user_name", value: username, class: "hidden" }),
       div({ class: "mb-4" },
         label({ for: "message", class: "block text-sm font-medium text-neutral-300 mb-2" },
           "Message",
@@ -26,6 +22,8 @@ export const GetHelpForm = (username) => {
           requestForm(mainForm, BASE_URL_SITE + relativeLink).then((resp) => {
             const resultInner = /** @type {ErrorFolio} */(resp.data);
             if (resultInner.isError === false) {
+              const textA = /** @type HTMLTextAreaElement */ (document.getElementById("message"));
+              textA.value = "";
               showPill("successPill", resultInner.message)
             } else {
               showPill("errorPill", resultInner.message);
