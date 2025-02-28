@@ -1,8 +1,10 @@
+import { GetHelpBlock } from '../help.js';
 import { GetLandingBlock } from '../landing.js';
 import { default as axios } from '../libs/axios.min.js';
 import { GetLoginBlock } from '../login.js';
 import { GetProfileBlock } from '../profile.js';
 import { GetSignupBlock } from '../signup.js';
+import { GetUsersBlock } from '../users.js';
 import { SessionValid } from './session.js';
 /**
  * @param {HTMLFormElement} mainForm
@@ -73,4 +75,6 @@ export function refreshPage(lStr) {
   GetSignupBlock(lStr);
   GetLandingBlock(lStr);
   GetProfileBlock(lStr);
+  GetUsersBlock(lStr);
+  GetHelpBlock(lStr);
 }
