@@ -78,6 +78,14 @@ public class PostFolio {
   }
 
   public ErrorFolio newPost(String mess) {
+    if(post5 != null){
+      post1 = post2;
+      post2 = post3;
+      post3 = post4;
+      post4 = post5;
+      post5 = null;
+      return new ErrorFolio(true, "Maximum post reached! First post will be deleted.");
+    }
     String[] cPosts = toArray();
     for (int ix = 0; ix <cPosts.length; ix++) {
       if (cPosts[ix] == null) {
@@ -101,8 +109,6 @@ public class PostFolio {
         return new ErrorFolio(false, "Successfully made a new post!");
       }
     }
-    deletePost("0");
-    post5 = mess;
-    return new ErrorFolio(true, "Maximum posts reached! First post deleted.");
+    return new ErrorFolio(true, "Something went wrong!.");
   }
 }
