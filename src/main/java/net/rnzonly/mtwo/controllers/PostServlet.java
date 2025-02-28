@@ -66,11 +66,11 @@ class PostServlet extends TemplateServlet {
       }
 
       PostFolio updatedPost = da.updatePost(username, message);
-      if(updatedPost == null){
-        result = new ErrorFolio(true, "You have reached maximum post limit!");
-      }else{
+      if(updatedPost != null){
         currUser.posts(updatedPost);
         result = new ErrorFolio(false, "Successfully posted!");
+      }else{
+        result = new ErrorFolio(true, "You have reached maximum post limit!");
       }
     }else if("delete".equals(action)){
       if (message == null) {
