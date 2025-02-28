@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import net.rnzonly.mtwo.listeners.FolioInitialized;
+import net.rnzonly.mtwo.utilities.JsonConverter;
 
 public class DataAccess {
   private Connection localcon = FolioInitialized.getMsqlcon();
@@ -100,14 +101,20 @@ public class DataAccess {
     FollowFolio currentF = getUserFollows(uname);
     String [] follows = currentF.toArray();
 
+    for (String follow : follows){
+      if(follow != null && follow.equalsIgnoreCase(ufName)){
+          return currentF;
+        }
+    }
     for(int i = 0; i < follows.length; i++){
       if(follows[i] == null){
+        currentF.followUser(ufName);
         String column = "follow" + (i + 1);
         pst = localcon.prepareStatement("update follows set " + column + " = ? where user_name = ?");
         pst.setString(1, ufName);
         pst.setString(2, uname);
         pst.executeUpdate();
-        return new FollowFolio(follows[0], follows[1], follows[2]);
+        return currentF;
       }
     }
     return null;
@@ -116,23 +123,17 @@ public class DataAccess {
   public FollowFolio removeUserFollow(String uname, String uFname) throws Exception{
     FollowFolio currentF = getUserFollows(uname);
     String [] follows = currentF.toArray();
-    int indextoRemove = -1;
 
-    for(int i = 0; i < follows.length; i++){
+    for(int i = 0; i < follows.length; i++){ //Find position of user to be unfollowed
       if(uFname.equalsIgnoreCase(follows[i])){
-        indextoRemove = i;
-        break;
+        String column = "follow" + (i + 1);
+        pst = localcon.prepareStatement("update follows set " + column + " = null where user_name = ?");
+        pst.setString(1, uname);
+        pst.executeUpdate();
+        return currentF;
       }
     }
-    if(indextoRemove == -1){
-      return currentF;
-    }else{
-      String column = "follow" + (indextoRemove + 1);
-      pst = localcon.prepareStatement("update follows set " + column + " = NULL where user_name = ?");
-      pst.setString(1, uname);
-      pst.executeUpdate();
-      return new FollowFolio(follows[0], follows[1], follows[2]);
-    }
+    return null;
   }
   
   public ErrorFolio deleteUser(String username) throws Exception{
