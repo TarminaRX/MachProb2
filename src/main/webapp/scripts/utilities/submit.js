@@ -59,8 +59,9 @@ export function requestForm(mainForm, customUrl = "") {
  */
 export function updateLastPathSegment(newValue) {
   const url = new URL(window.location.href);
-  let segments = url.pathname.split('/');
-  segments[segments.length - 1] = newValue;
+  let segments = newValue.split('/');
+  //console.log(segments);
+  //segments[segments.length - 1] = newValue;
 
   const newUrl = new URL(window.location.origin);
   newUrl.pathname = segments.join('/');

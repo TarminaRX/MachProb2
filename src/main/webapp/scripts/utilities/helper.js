@@ -13,12 +13,14 @@ export function sleepSec(seconds) {
  */
 export function silentReload(nextPath) {
   axios.get(nextPath).then((respo) => {
+    const finalUrl = respo.request.responseURL;
+    const path = new URL(finalUrl).pathname;
     const parserDom = new DOMParser();
     const docu = parserDom.parseFromString(respo.data, "text/html");
     document.body = docu.body;
     document.title = docu.title;
-    updateLastPathSegment(nextPath);
-    refreshPage(nextPath);
+    updateLastPathSegment(path);
+    refreshPage(path);
   }).catch((err) => {
     console.log(err);
   });
