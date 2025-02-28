@@ -59,13 +59,7 @@ public class PostFolio {
     if (position == -1)
       return new ErrorFolio(true, "Post not found!");
 
-    // }else if (position >= 0 && position <= 4){
-    //   post1 = post2;
-    //   post2 = post3;
-    //   post3 = post4;
-    //   post4 = post5;
-    //   post5 = null;
-    // }
+
     switch (position) {
         case 0: post1 = post2; 
         case 1: post2 = post3;
@@ -79,6 +73,9 @@ public class PostFolio {
 
   public ErrorFolio newPost(String mess) {
     String[] cPosts = toArray();
+    if (mess.length() > 200) {
+      return new ErrorFolio(true, "Maximum of 200 characters only!");
+    }
     for (int ix = 0; ix <cPosts.length; ix++) {
       if (cPosts[ix] == null) {
         switch (ix) {

@@ -12,8 +12,8 @@ import net.rnzonly.mtwo.models.ErrorFolio;
 import net.rnzonly.mtwo.models.UserFolio;
 import net.rnzonly.mtwo.utilities.JsonConverter;
 
-@WebServlet("/api/post")
-class PostServlet extends TemplateServlet {
+@WebServlet("/api/current_user")
+class CurrentUserServlet extends TemplateServlet {
   private DataAccess da = new DataAccess();
 
   @Override
@@ -34,24 +34,8 @@ class PostServlet extends TemplateServlet {
     }
 
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
+    aba.print(JsonConverter.convertToJson(currUser, "password"));
 
-    String action = request.getParameter("action");
-    String message = request.getParameter("message");
-
-    if (action == null || message == null) {
-      messageError = new ErrorFolio(true, "Malformed body request");
-      aba.print(JsonConverter.convertToJson(messageError));
-      return;
-    }
-
-    if (action.equals("create")) {
-      messageError = da.updateUserPosts(message, currUser);
-    } else if (action.equals("delete")) { 
-      messageError = da.removeUserPost(message, currUser);
-    } else {
-      messageError = new ErrorFolio(true, "Unknown action type!");
-    }
-
-    aba.print(JsonConverter.convertToJson(messageError));
+    // aba.print(JsonConverter.convertToJson(rm));
   }
 }

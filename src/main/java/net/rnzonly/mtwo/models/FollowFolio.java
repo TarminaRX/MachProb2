@@ -54,6 +54,8 @@ public class FollowFolio {
             break;
         }
         return new ErrorFolio(false, "Successfully followed user!");
+      } else if (follows[i].equals(username)) {
+        return new ErrorFolio(true, "You are already following this user!");
       }
     }
     return new ErrorFolio(true, "Maximum following reached!");

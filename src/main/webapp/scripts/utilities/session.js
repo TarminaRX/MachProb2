@@ -16,7 +16,7 @@ export function SessionValid(path) {
 */
 export async function getUserObject() {
   try {
-    const requestData = await axios.get(BASE_URL_SITE + "api/user");
+    const requestData = await axios.get(BASE_URL_SITE + "api/current_user");
 
     /** @type {UserContents} */
     const resultData = requestData.data;

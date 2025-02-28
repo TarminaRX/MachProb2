@@ -1,12 +1,13 @@
 package net.rnzonly.mtwo.controllers;
 
 import java.io.PrintWriter;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import net.rnzonly.mtwo.models.DataAccess;
-import net.rnzonly.mtwo.models.FollowFolio;
 import net.rnzonly.mtwo.models.ErrorFolio;
 import net.rnzonly.mtwo.models.UserFolio;
 import net.rnzonly.mtwo.utilities.JsonConverter;
@@ -33,58 +34,26 @@ class FollowServlet extends TemplateServlet {
     }
 
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
-    String[] followsArray = currUser.follows().toArray();
 
     String action = request.getParameter("action");
     String username = request.getParameter("user_name");
 
-    if(action == null || username == null){
-      messageError = new ErrorFolio(true, "Invalid parameter provided!");
+
+   if (action == null || username == null) {
+      messageError = new ErrorFolio(true, "Malformed body request");
       aba.print(JsonConverter.convertToJson(messageError));
       return;
     }
 
-    if(username.equals("currentUser")){
-      messageError = new ErrorFolio(true, "You cannot follow or unfollow yourself!");
-      aba.print(JsonConverter.convertToJson(messageError));
-      return;
+
+    if (action.equals("follow")) {
+      messageError = da.updateUserFollows(username, currUser);
+    } else if (action.equals("unfollow")) { 
+      messageError = da.removeUserFollow(username, currUser);
+    } else {
+      messageError = new ErrorFolio(true, "Unknown action type!");
     }
 
-    if(!da.checkIfUserExists(username)){
-      messageError = new ErrorFolio(true, "User does not exist!");
-      aba.print(JsonConverter.convertToJson(messageError));
-      return;
-    }
-
-    ErrorFolio result = null;
-    if("follow".equals(action)){
-      for (String follow : followsArray){
-        if(follow != null && follow.equalsIgnoreCase(username)){
-          result = new ErrorFolio(true, "You are already following " + username);
-          aba.print(JsonConverter.convertToJson(result));
-          return;
-        }
-      }
-      FollowFolio updateF = da.updateUserFollows(currUser.user_name(), username);
-      if(updateF != null){
-          currUser.follows(updateF);
-          result = new ErrorFolio(false, "Successfully followed " + username);
-      }else{
-          result = new ErrorFolio(true, "You have reached the maximum follow limit!");
-      }
-    }else if("unfollow".equals(action)){
-      FollowFolio updateF = da.removeUserFollow(currUser.user_name(), username);
-      currUser.follows(updateF);
-      result = new ErrorFolio(false, "Successfully unfollowed " + username);
-    }else{
-      result = new ErrorFolio(true, "Invalid action!");
-    }
-
-    sq.setAttribute("currentUser", currUser);
-    aba.print(JsonConverter.convertToJson(result));
-
-    // aba.print(JsonConverter.convertToJson(um));
-
-    // aba.print(JsonConverter.convertToJson(rm));
+    aba.println(JsonConverter.convertToJson(messageError));
   }
 }
