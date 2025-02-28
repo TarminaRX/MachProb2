@@ -10,8 +10,8 @@ import net.rnzonly.mtwo.models.ErrorFolio;
 import net.rnzonly.mtwo.models.UserFolio;
 import net.rnzonly.mtwo.utilities.JsonConverter;
 
-@WebServlet("/api/create")
-class AdminCreateServlet extends TemplateServlet {
+@WebServlet("/api/Superdelete")
+class SuperAdminDeleteServlet extends TemplateServlet {
   private DataAccess da = new DataAccess();
 
   @Override
@@ -32,36 +32,47 @@ class AdminCreateServlet extends TemplateServlet {
     }
 
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
-    
-    if(!"admin".equalsIgnoreCase(currUser.user_role()) && !"super_admin".equalsIgnoreCase(currUser.user_role())){
+    if(!"super_admin".equalsIgnoreCase(currUser.user_role())){
       messageError = new ErrorFolio(true, "You are not authorized to do this!");
       aba.print(JsonConverter.convertToJson(messageError));
       return;
     }
 
-    String uNametoCreate = request.getParameter("user_name");
-    String password = request.getParameter("password");
-    String uRole = request.getParameter("user_role");
+    String action = request.getParameter("action");
+    String uNametoDelete = request.getParameter("user_name");
 
-    if(uRole.equalsIgnoreCase("superadmin")){
-      messageError = new ErrorFolio(true, "You are not authorized to create a super admin user.");
+    if(uNametoDelete == null){
+      messageError = new ErrorFolio(true, "Invalid Username!");
       aba.print(JsonConverter.convertToJson(messageError));
       return;
-    }else{
-      if(da.checkIfUserExists(uNametoCreate)){
-        messageError = new ErrorFolio(true, "User already exists!");
+    }
+
+    if(currUser.user_name().equalsIgnoreCase(uNametoDelete)){
+      messageError = new ErrorFolio(true, "You cannot delete yourself!");
+      aba.print(JsonConverter.convertToJson(messageError));
+      return;
+    }
+
+    if("delete".equals(action)){
+      if(da.checkIfUserExists(uNametoDelete)){
+        da.deleteUser(uNametoDelete);
+        messageError = new ErrorFolio(false, "User deleted successfully!");
+      }else if(!da.checkIfUserExists(uNametoDelete)){
+        messageError = new ErrorFolio(true, "User does not exist!");
         aba.print(JsonConverter.convertToJson(messageError));
         return;
       }else{
-        messageError = da.registerUser(uNametoCreate, password, uRole);
-        if(messageError.isError() == false){
-            messageError = new ErrorFolio(false, "User created successfully!");
-        }else{
-            messageError = new ErrorFolio(true, "User creation failed. User may already exist");
-        }
+        messageError = new ErrorFolio(true, "Failed to delete");
+        aba.print(JsonConverter.convertToJson(messageError));
+        return;
       }
+    }else{
+      messageError = new ErrorFolio(true, "Invalid Action!");
+      aba.print(JsonConverter.convertToJson(messageError));
+      return;
     }
     
+
     aba.print(JsonConverter.convertToJson(messageError));
 
     // aba.print(JsonConverter.convertToJson(rm));

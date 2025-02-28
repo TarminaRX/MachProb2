@@ -172,7 +172,22 @@ public class DataAccess {
       }
     }
     return null;
+  }
 
+  public PostFolio deletePost(String uname, String mess) throws Exception{
+    PostFolio posts = getUserPosts(uname);
+    String [] postsArray = posts.toArray();
+    for(int i = 0; i < postsArray.length; i++){
+      if(mess.equalsIgnoreCase(postsArray[i])){
+        posts.deletePost(mess);
+        String column = "post" + (i + 1);
+        pst = localcon.prepareStatement("update posts set " + column + " = null where user_name = ?");
+        pst.setString(1, uname);
+        pst.executeUpdate();
+        return posts;
+      }
+    }
+    return null;
   }
 
   public ErrorFolio credentialsExists(String uname, String password)

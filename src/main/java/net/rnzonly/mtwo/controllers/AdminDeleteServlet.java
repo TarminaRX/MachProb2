@@ -32,7 +32,7 @@ class AdminDeleteServlet extends TemplateServlet {
     }
 
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
-    if(!"admin".equalsIgnoreCase(currUser.user_role()) && !"super_admin".equalsIgnoreCase(currUser.user_role())){
+    if(!"admin".equalsIgnoreCase(currUser.user_role())){
       messageError = new ErrorFolio(true, "You are not authorized to do this!");
       aba.print(JsonConverter.convertToJson(messageError));
       return;
@@ -40,6 +40,7 @@ class AdminDeleteServlet extends TemplateServlet {
 
     String action = request.getParameter("action");
     String uNametoDelete = request.getParameter("user_name");
+    String uRole = request.getParameter("user_role");
 
     if(uNametoDelete == null){
       messageError = new ErrorFolio(true, "Invalid Username!");
@@ -54,17 +55,23 @@ class AdminDeleteServlet extends TemplateServlet {
     }
 
     if("delete".equals(action)){
-      if(da.checkIfUserExists(uNametoDelete)){
-        da.deleteUser(uNametoDelete);
-        messageError = new ErrorFolio(false, "User deleted successfully!");
-      }else if(!da.checkIfUserExists(uNametoDelete)){
-        messageError = new ErrorFolio(true, "User does not exist!");
+      if(uRole.equalsIgnoreCase("superadmin")){
+        messageError = new ErrorFolio(true, "You are not authorized to edit this user");
         aba.print(JsonConverter.convertToJson(messageError));
         return;
       }else{
-        messageError = new ErrorFolio(true, "Failed to delete");
-        aba.print(JsonConverter.convertToJson(messageError));
-        return;
+        if(da.checkIfUserExists(uNametoDelete)){
+          da.deleteUser(uNametoDelete);
+          messageError = new ErrorFolio(false, "User deleted successfully!");
+        }else if(!da.checkIfUserExists(uNametoDelete)){
+          messageError = new ErrorFolio(true, "User does not exist!");
+          aba.print(JsonConverter.convertToJson(messageError));
+          return;
+        }else{
+          messageError = new ErrorFolio(true, "Failed to delete");
+          aba.print(JsonConverter.convertToJson(messageError));
+          return;
+        }
       }
     }else{
       messageError = new ErrorFolio(true, "Invalid Action!");

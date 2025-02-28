@@ -57,7 +57,7 @@ class PostServlet extends TemplateServlet {
       }
 
     ErrorFolio result = null;
-    PostFolio userpost = da.getUserPosts(username);
+
     if("create".equals(action)){
       if(message == null){
         messageError = new ErrorFolio(true, "Posts cannot be empty!");
@@ -67,18 +67,28 @@ class PostServlet extends TemplateServlet {
 
       PostFolio updatedPost = da.updatePost(username, message);
       if(updatedPost == null){
-        messageError = new ErrorFolio(true, "You have reached maximum post limit!");
+        result = new ErrorFolio(true, "You have reached maximum post limit!");
       }else{
         currUser.posts(updatedPost);
+        result = new ErrorFolio(false, "Successfully posted!");
       }
-      result = userpost.newPost(message);
-      da.updatePost(username, message);
+    }else if("delete".equals(action)){
+      if (message == null) {
+        messageError = new ErrorFolio(true, "Specify which post to delete!");
+        aba.print(JsonConverter.convertToJson(messageError));
+        return;
+      }
 
+      PostFolio updatedPost = da.updatePost(username, message);
+      currUser.posts(updatedPost);
+      result = new ErrorFolio(false, "Successfully deleted post!");
+    }else{
+      result = new ErrorFolio(true, "Invalid action!");
     }
 
     
-    
-    aba.print(JsonConverter.convertToJson(messageError));
+    sq.setAttribute("currentUser", currUser);
+    aba.print(JsonConverter.convertToJson(result));
 
     // aba.print(JsonConverter.convertToJson(rm));
   }

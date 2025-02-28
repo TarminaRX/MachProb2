@@ -33,7 +33,7 @@ class AdminUpdateServlet extends TemplateServlet {
 
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
     
-    if(!"admin".equalsIgnoreCase(currUser.user_role()) && !"super_admin".equalsIgnoreCase(currUser.user_role())){
+    if(!"admin".equalsIgnoreCase(currUser.user_role())){
       messageError = new ErrorFolio(true, "You are not authorized to do this!");
       aba.print(JsonConverter.convertToJson(messageError));
       return;
@@ -49,15 +49,19 @@ class AdminUpdateServlet extends TemplateServlet {
         messageError = new ErrorFolio(true, "All fields are required!");
         aba.print(JsonConverter.convertToJson(messageError));
         return;
-    }
-        messageError = da.updateUser(uNametoUpdate, password, uRole, userName);
-        if(messageError.isError() == false){
-            messageError = new ErrorFolio(false, "User updated successfully!");
+    } 
+        if(uRole.equalsIgnoreCase("superadmin")){
+          messageError = new ErrorFolio(true, "You are not authorized to edit this user");
+          aba.print(JsonConverter.convertToJson(messageError));
+          return;
         }else{
+          messageError = da.updateUser(uNametoUpdate, password, uRole, userName);
+          if(messageError.isError() == false){
+            messageError = new ErrorFolio(false, "User updated successfully!");
+          }else{
             messageError = new ErrorFolio(true, "Failed to udpate user. Try again");
+          }
         }
-      
-
     aba.print(JsonConverter.convertToJson(messageError));
 
     // aba.print(JsonConverter.convertToJson(rm));

@@ -10,8 +10,8 @@ import net.rnzonly.mtwo.models.ErrorFolio;
 import net.rnzonly.mtwo.models.UserFolio;
 import net.rnzonly.mtwo.utilities.JsonConverter;
 
-@WebServlet("/api/create")
-class AdminCreateServlet extends TemplateServlet {
+@WebServlet("/api/Supercreate")
+class SuperAdminCreateServlet extends TemplateServlet {
   private DataAccess da = new DataAccess();
 
   @Override
@@ -33,7 +33,7 @@ class AdminCreateServlet extends TemplateServlet {
 
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
     
-    if(!"admin".equalsIgnoreCase(currUser.user_role()) && !"super_admin".equalsIgnoreCase(currUser.user_role())){
+    if(!"super_admin".equalsIgnoreCase(currUser.user_role())){
       messageError = new ErrorFolio(true, "You are not authorized to do this!");
       aba.print(JsonConverter.convertToJson(messageError));
       return;
@@ -43,12 +43,7 @@ class AdminCreateServlet extends TemplateServlet {
     String password = request.getParameter("password");
     String uRole = request.getParameter("user_role");
 
-    if(uRole.equalsIgnoreCase("superadmin")){
-      messageError = new ErrorFolio(true, "You are not authorized to create a super admin user.");
-      aba.print(JsonConverter.convertToJson(messageError));
-      return;
-    }else{
-      if(da.checkIfUserExists(uNametoCreate)){
+    if(da.checkIfUserExists(uNametoCreate)){
         messageError = new ErrorFolio(true, "User already exists!");
         aba.print(JsonConverter.convertToJson(messageError));
         return;
@@ -60,7 +55,8 @@ class AdminCreateServlet extends TemplateServlet {
             messageError = new ErrorFolio(true, "User creation failed. User may already exist");
         }
       }
-    }
+
+    
     
     aba.print(JsonConverter.convertToJson(messageError));
 
