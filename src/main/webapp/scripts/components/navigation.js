@@ -29,6 +29,33 @@ export const AsideBlock = (username, select_mode) => {
   )
 };
 
+
+/**
+ * @param {import('../libs/van-1.5.3.min.js').State<string>} username
+ * @param {string} select_mode
+ */
+export const AdminAsideBlock = (username, select_mode) => {
+  return aside(
+    // company name
+    { id: "sidebar", class: "hidden lg:flex flex flex-col w-64 border-r border-neutral-800 p-4 h-full sticky top-0 overflow-y-auto" },
+    div({ class: "text-2xl font-bold mb-8" },
+      "Folio",
+    ),
+    // navigation
+    AdminNavBar(select_mode),
+    // post button
+    
+    div({ class: "flex-1" }),
+    button({ class: "mt-6 w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full transition" },
+      "Logout",
+    ),
+    //username
+    div({ class: "mt-auto border-t border-neutral-800 pt-4" },
+      SideBarUser(username)
+    )
+  )
+};
+
 /**
  * @param {import('../libs/van-1.5.3.min.js').State<string>} user_name
  */
@@ -56,7 +83,7 @@ export const PicUser = (uname, additional_class) => {
     firstLetter = van.derive(() => uname.val.charAt(0).toUpperCase());
   }
   return div({ class: "bg-neutral-700 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold " + additional_class },
-    firstLetter 
+    firstLetter
   );
 };
 
@@ -115,6 +142,97 @@ const HelpNav = (sel) => {
     span(
       "Help",
     ),
+  )
+};
+
+/**
+ * @param {boolean} sel
+ */
+const AdminNav = (sel) => {
+  const classText = (sel === true) ? "text-blue-200 font-bold" : "text-white hover:text-blue-300 transition";
+  return a({ onclick: () => silentReload("admin.jsp"), href: "#", class: "flex items-center space-x-3 " + classText },
+    svg({ xmlns: "http://www.w3.org/2000/svg", class: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor" },
+      path({ "stroke-linecap": "round", "stroke-linejoin": "round", "stroke-width": "2", "d": "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" }),
+    ),
+    span(
+      "Admin",
+    ),
+  )
+};
+
+/**
+ * @param {boolean} sel
+ */
+const CreateNav = (sel) => {
+  const classText = (sel === true) ? "text-blue-200 font-bold" : "text-white hover:text-blue-300 transition";
+  return a({ onclick: () => silentReload("create.jsp"), href: "#", class: "flex items-center space-x-3 " + classText },
+    svg({ xmlns: "http://www.w3.org/2000/svg", class: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor" },
+      path({ "stroke-linecap": "round", "stroke-linejoin": "round", "stroke-width": "2", "d": "M12 6v6m0 0v6m0-6h6m-6 0H6" }),
+    ),
+    span(
+      "Create",
+    ),
+  )
+};
+
+/**
+ * @param {boolean} sel
+ */
+const UpdateNav = (sel) => {
+  const classText = (sel === true) ? "text-blue-200 font-bold" : "text-white hover:text-blue-300 transition";
+  return a({ onclick: () => silentReload("update.jsp"), href: "#", class: "flex items-center space-x-3 " + classText },
+    svg({ xmlns: "http://www.w3.org/2000/svg", class: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor" },
+      path({ "stroke-linecap": "round", "stroke-linejoin": "round", "stroke-width": "2", "d": "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" }),
+    ),
+    span(
+      "Update",
+    ),
+  )
+};
+
+/**
+ * @param {boolean} sel
+ */
+const DeleteNav = (sel) => {
+  const classText = (sel === true) ? "text-blue-200 font-bold" : "text-white hover:text-blue-300 transition";
+  return a({ onclick: () => silentReload("delete.jsp"), href: "#", class: "flex items-center space-x-3 " + classText },
+    svg({ xmlns: "http://www.w3.org/2000/svg", class: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor" },
+      path({ "stroke-linecap": "round", "stroke-linejoin": "round", "stroke-width": "2", "d": "M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" }),
+    ),
+    span(
+      "Delete",
+    ),
+  )
+};
+
+
+/**
+ * @param {string} selected_node -
+ */
+const AdminNavBar = (selected_node) => {
+  /** @type boolean */
+  let hnav, pnav, unav, henav = false;
+  switch (selected_node) {
+    case "admin":
+      hnav = true;
+      break;
+    case "create":
+      pnav = true;
+      break;
+    case "update":
+      unav = true;
+      break;
+    case "delete":
+      henav = true;
+      break;
+  }
+
+  return nav(
+    { class: "space-y-6 mt-4" },
+    AdminNav(hnav),
+    CreateNav(pnav),
+    UpdateNav(unav),
+    DeleteNav(henav)
   )
 };
 

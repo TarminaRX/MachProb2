@@ -32,6 +32,18 @@ declare global {
       follow3: string | null
     } | null
   }
+
+  type UserContentLite = {
+    user_name: string
+    user_role: {
+      value: string
+    }
+  }
+
+  type SupportMessage = {
+    user_name: string
+    message: string
+  }
 }
 
 export { };

@@ -1,9 +1,14 @@
+import { GetAdminBlock } from '../admin.js';
+import { GetCreateBlock } from '../create.js';
+import { GetDeleteBlock } from '../delete.js';
 import { GetHelpBlock } from '../help.js';
 import { GetLandingBlock } from '../landing.js';
 import { default as axios } from '../libs/axios.min.js';
 import { GetLoginBlock } from '../login.js';
 import { GetProfileBlock } from '../profile.js';
+import { GetResultBlock } from '../result.js';
 import { GetSignupBlock } from '../signup.js';
+import { GetUpdateBlock } from '../update.js';
 import { GetUsersBlock } from '../users.js';
 import { SessionValid } from './session.js';
 /**
@@ -77,4 +82,9 @@ export function refreshPage(lStr) {
   GetProfileBlock(lStr);
   GetUsersBlock(lStr);
   GetHelpBlock(lStr);
+  GetAdminBlock(lStr);
+  GetCreateBlock(lStr);
+  GetUpdateBlock(lStr);
+  GetDeleteBlock(lStr);
+  GetResultBlock(lStr);
 }
