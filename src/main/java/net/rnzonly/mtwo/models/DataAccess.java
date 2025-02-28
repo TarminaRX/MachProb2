@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 
 import net.rnzonly.mtwo.listeners.FolioInitialized;
 
@@ -25,22 +26,22 @@ public class DataAccess {
       return currError;
     }
 
-    pst = localcon.prepareStatement("INSERT INTO account (user_name, " +
-                                    "password, user_role) VALUES (?, ?, ?)");
+    pst = localcon.prepareStatement("INSERT INTO account (user_name, "
+                                    + "password, user_role) VALUES (?, ?, ?)");
     pst.setString(1, username);
     pst.setString(2, pass);
     pst.setString(3, role);
     pst.executeUpdate();
     // posts table
     pst = localcon.prepareStatement(
-        "INSERT INTO posts (user_name, post1, post2, post3, post4, post5) " +
-        "VALUES (?, NULL, NULL, NULL, NULL, NULL)");
+        "INSERT INTO posts (user_name, post1, post2, post3, post4, post5) "
+        + "VALUES (?, NULL, NULL, NULL, NULL, NULL)");
     pst.setString(1, username);
     pst.executeUpdate();
     // follow table
     pst = localcon.prepareStatement(
-        "INSERT INTO follows (user_name, follow1, follow2, follow3) VALUES " +
-        "(?, NULL, NULL, NULL)");
+        "INSERT INTO follows (user_name, follow1, follow2, follow3) VALUES "
+        + "(?, NULL, NULL, NULL)");
     pst.setString(1, username);
     pst.executeUpdate();
 
@@ -73,8 +74,8 @@ public class DataAccess {
       return currError;
     }
 
-    pst = localcon.prepareStatement("INSERT INTO account (user_name, " +
-                                    "password, user_role) VALUES (?, ?, ?)");
+    pst = localcon.prepareStatement("INSERT INTO account (user_name, "
+                                    + "password, user_role) VALUES (?, ?, ?)");
     pst.setString(1, newUserName);
     pst.setString(2, password);
     pst.setString(3, uRole);
@@ -99,6 +100,28 @@ public class DataAccess {
     return currError;
   }
 
+  public UserFolio[] getAllUsersLite(UserFolio curUser) throws Exception {
+    if (curUser.user_role().toString().equals("super_admin")) {
+      pst = localcon.prepareStatement(
+          "SELECT * FROM account WHERE user_name != ?");
+    } else {
+      pst = localcon.prepareStatement(
+          "SELECT * FROM account WHERE (user_role = "
+          + "'user') AND user_name != ?");
+    }
+    ArrayList<UserFolio> ufList = new ArrayList<>();
+    pst.setString(1, curUser.user_name());
+    ResultSet setOne = pst.executeQuery();
+    while (setOne.next()) {
+      UserFolio bufUF = new UserFolio(
+          setOne.getString("user_name"), setOne.getString("password"),
+          setOne.getString("user_role"), null, null);
+      ufList.add(bufUF);
+    }
+
+    return ufList.toArray(new UserFolio[ufList.size()]);
+  };
+
   public FollowFolio getUserFollows(String uname) throws Exception {
     pst =
         localcon.prepareStatement("select * from follows WHERE user_name = ?");
@@ -116,7 +139,8 @@ public class DataAccess {
     String[] follows = curUser.follows().toArray();
     for (int i = 0; i < follows.length; i++) {
       String currentFollow = "follow" + (i + 1);
-      pst = localcon.prepareStatement("update follows set " + currentFollow + " = ? where user_name = ?");
+      pst = localcon.prepareStatement("update follows set " + currentFollow +
+                                      " = ? where user_name = ?");
       if (follows[i] == null) {
         pst.setNull(1, Types.VARCHAR);
       } else {
@@ -154,12 +178,13 @@ public class DataAccess {
     updateFollowsTable(curUser);
     return currErr;
   }
-  
+
   public void updatePostsTable(UserFolio curUser) throws Exception {
     String[] posts = curUser.posts().toArray();
     for (int i = 0; i < posts.length; i++) {
       String currentPost = "post" + (i + 1);
-      pst = localcon.prepareStatement("update posts set " + currentPost + " = ? where user_name = ?");
+      pst = localcon.prepareStatement("update posts set " + currentPost +
+                                      " = ? where user_name = ?");
       if (posts[i] == null) {
         pst.setNull(1, Types.VARCHAR);
       } else {
@@ -170,7 +195,8 @@ public class DataAccess {
     }
   }
 
-  public ErrorFolio updateUserPosts(String message, UserFolio curUser) throws Exception {
+  public ErrorFolio updateUserPosts(String message, UserFolio curUser)
+      throws Exception {
     ErrorFolio currErr = curUser.posts().newPost(message);
     if (currErr.isError()) {
       return currErr;
@@ -179,7 +205,8 @@ public class DataAccess {
     return currErr;
   }
 
-  public ErrorFolio removeUserPost(String message, UserFolio curUser) throws Exception {
+  public ErrorFolio removeUserPost(String message, UserFolio curUser)
+      throws Exception {
     ErrorFolio currErr = curUser.posts().deletePost(message);
     if (currErr.isError()) {
       return currErr;
@@ -190,7 +217,8 @@ public class DataAccess {
 
   public ErrorFolio deleteUser(String username) {
     try {
-      pst = localcon.prepareStatement("delete from account where user_name = ?");
+      pst =
+          localcon.prepareStatement("delete from account where user_name = ?");
       pst.setString(1, username);
       pst.executeUpdate();
       return new ErrorFolio(false, "Successfully deleted user!");
@@ -212,15 +240,17 @@ public class DataAccess {
     return null;
   }
 
-  public PostFolio updatePost(String uname, String mess) throws Exception{
+  public PostFolio updatePost(String uname, String mess) throws Exception {
     PostFolio posts = getUserPosts(uname);
-    String [] postsArray = posts.toArray();
+    String[] postsArray = posts.toArray();
 
-    for(int i = 0; i < postsArray.length; i++){ //Find position of user to be unfollowed
-      if(postsArray[i] == null){
+    for (int i = 0; i < postsArray.length;
+         i++) { // Find position of user to be unfollowed
+      if (postsArray[i] == null) {
         posts.newPost(mess);
         String column = "post" + (i + 1);
-        pst = localcon.prepareStatement("update posts set " + column + " = ? where user_name = ?");
+        pst = localcon.prepareStatement("update posts set " + column +
+                                        " = ? where user_name = ?");
         pst.setString(1, mess);
         pst.setString(2, uname);
         pst.executeUpdate();
@@ -230,14 +260,15 @@ public class DataAccess {
     return null;
   }
 
-  public PostFolio deletePost(String uname, String mess) throws Exception{
+  public PostFolio deletePost(String uname, String mess) throws Exception {
     PostFolio posts = getUserPosts(uname);
-    String [] postsArray = posts.toArray();
-    for(int i = 0; i < postsArray.length; i++){
-      if(mess.equalsIgnoreCase(postsArray[i])){
+    String[] postsArray = posts.toArray();
+    for (int i = 0; i < postsArray.length; i++) {
+      if (mess.equalsIgnoreCase(postsArray[i])) {
         posts.deletePost(mess);
         String column = "post" + (i + 1);
-        pst = localcon.prepareStatement("update posts set " + column + " = null where user_name = ?");
+        pst = localcon.prepareStatement("update posts set " + column +
+                                        " = null where user_name = ?");
         pst.setString(1, uname);
         pst.executeUpdate();
         return posts;

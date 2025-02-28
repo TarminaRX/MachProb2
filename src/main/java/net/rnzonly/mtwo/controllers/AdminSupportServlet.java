@@ -1,19 +1,22 @@
 package net.rnzonly.mtwo.controllers;
 
 import java.io.PrintWriter;
+import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.rnzonly.mtwo.listeners.FolioInitialized;
 import net.rnzonly.mtwo.models.DataAccess;
 import net.rnzonly.mtwo.models.ErrorFolio;
+import net.rnzonly.mtwo.models.SupportMessage;
 import net.rnzonly.mtwo.models.UserFolio;
 import net.rnzonly.mtwo.utilities.JsonConverter;
 
-@WebServlet("/api/create")
-class AdminCreateServlet extends TemplateServlet {
+@WebServlet("/api/list_support")
+class AdminSupportServlet extends TemplateServlet {
   private DataAccess da = new DataAccess();
 
   @Override
@@ -39,29 +42,10 @@ class AdminCreateServlet extends TemplateServlet {
       messageError = new ErrorFolio(true, "You don't privilege for this!");
     }
 
-    String uNametoCreate = request.getParameter("user_name");
-    String password = request.getParameter("password");
-    String uRole = request.getParameter("user_role");
-
-    
-    if (uNametoCreate == null || password == null || uRole == null || uNametoCreate.length() == 0 || password.length() == 0 || uRole.length() == 0) {
-      messageError = new ErrorFolio(true, "Malformed body request");
-      aba.print(JsonConverter.convertToJson(messageError));
-      return;
-    }
-
-
-    if ((uRole.equals("super_admin") && currUser.user_role().equals("admin")) || (uRole.equals("admin") && currUser.user_role().equals("admin"))) {
-      messageError = new ErrorFolio(
-          true, "You are not authorized to create this kind of user.");
-      aba.print(JsonConverter.convertToJson(messageError));
-      return;
-    } else {
-      messageError = da.registerUser(uNametoCreate, password, uRole);
-    }
-
-    aba.print(JsonConverter.convertToJson(messageError));
-
-    // aba.print(JsonConverter.convertToJson(rm));
+    List<SupportMessage> messages = FolioInitialized.spMessages();
+    List<SupportMessage> lastFive =
+        messages.subList(Math.max(0, messages.size() - 5), messages.size());
+    SupportMessage[] spM = lastFive.toArray(new SupportMessage[0]);
+    aba.println(JsonConverter.convertToJson(spM));
   }
 }
