@@ -98,6 +98,6 @@ public class PostFolio {
         return new ErrorFolio(false, "Successfully made a new post!");
       }
     }
-    return new ErrorFolio(true, "Maximum posts reached! First post deleted.");
+    return new ErrorFolio(true, "Maximum posts reached!");
   }
 }
