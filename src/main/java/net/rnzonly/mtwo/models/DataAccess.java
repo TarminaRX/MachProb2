@@ -54,6 +54,37 @@ public class DataAccess {
     return false;
   }
 
+  public ErrorFolio updateUser(String newUserName, String password, String uRole, String oldUserName) throws Exception{
+    ErrorFolio currError = new ErrorFolio(false, "Account successfully updated!");
+    if (!checkIfUserExists(oldUserName)) {
+      currError.isError(true);
+      currError.message("Account does not exist!");
+      return currError;
+    }
+
+    pst = localcon.prepareStatement("INSERT INTO account (user_name, password, user_role) VALUES (?, ?, ?)");
+    pst.setString(1, newUserName);
+    pst.setString(2, password);
+    pst.setString(3, uRole);
+    pst.executeUpdate();
+
+    pst = localcon.prepareStatement("update posts set user_name = ? where user_name = ?");
+    pst.setString(1, newUserName);
+    pst.setString(2, oldUserName);
+    pst.executeUpdate();
+
+    pst = localcon.prepareStatement("update follows set user_name = ? where user_name = ?");
+    pst.setString(1, newUserName);
+    pst.setString(2, oldUserName);
+    pst.executeUpdate();
+
+    pst = localcon.prepareStatement("delete from account where user_name = ?");
+    pst.setString(1, oldUserName);
+    pst.executeUpdate();
+
+    return currError;
+  }
+
   public FollowFolio getUserFollows(String uname) throws Exception {
     pst = localcon.prepareStatement("select * from follows WHERE user_name = ?");
     pst.setString(1, uname);

@@ -11,8 +11,8 @@ import net.rnzonly.mtwo.models.UserFolio;
 import net.rnzonly.mtwo.models.UserMessage;
 import net.rnzonly.mtwo.utilities.JsonConverter;
 
-@WebServlet("/api/create")
-class AdminCreateServlet extends TemplateServlet {
+@WebServlet("/api/update")
+class AdminUpdateServlet extends TemplateServlet {
   private DataAccess da = new DataAccess();
 
   @Override
@@ -40,25 +40,25 @@ class AdminCreateServlet extends TemplateServlet {
       return;
     }
 
-    String uNametoCreate = request.getParameter("user_name");
+    String uNametoUpdate = request.getParameter("user_change");
     String password = request.getParameter("password");
     String uRole = request.getParameter("user_role");
+    String userName = request.getParameter("user_name");
 
-    if(da.checkIfUserExists(uNametoCreate)){
-        messageError = new ErrorFolio(true, "User already exists!");
+    if (uNametoUpdate == null || uNametoUpdate.isEmpty() || password == null || password.isEmpty() ||
+        uRole == null || uRole.isEmpty() || userName == null || userName.isEmpty()) {
+        messageError = new ErrorFolio(true, "All fields are required!");
         aba.print(JsonConverter.convertToJson(messageError));
         return;
-      }else{
-        messageError = da.registerUser(uNametoCreate, password, uRole);
+    }
+        messageError = da.updateUser(uNametoUpdate, password, uRole, userName);
         if(messageError.isError() == false){
-            messageError = new ErrorFolio(false, "User created successfully!");
+            messageError = new ErrorFolio(false, "User updated successfully!");
         }else{
-            messageError = new ErrorFolio(true, "User creation failed. User may already exist");
+            messageError = new ErrorFolio(true, "Failed to udpate user. Try again");
         }
-      }
+      
 
-    
-    
     aba.print(JsonConverter.convertToJson(messageError));
 
     // aba.print(JsonConverter.convertToJson(rm));
