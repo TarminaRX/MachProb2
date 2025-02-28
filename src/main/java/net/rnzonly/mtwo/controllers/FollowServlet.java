@@ -9,7 +9,6 @@ import net.rnzonly.mtwo.models.DataAccess;
 import net.rnzonly.mtwo.models.FollowFolio;
 import net.rnzonly.mtwo.models.ErrorFolio;
 import net.rnzonly.mtwo.models.UserFolio;
-import net.rnzonly.mtwo.models.UserMessage;
 import net.rnzonly.mtwo.utilities.JsonConverter;
 
 @WebServlet("/api/follow")
