@@ -56,7 +56,6 @@ public class FollowFolio {
         return new ErrorFolio(false, "Successfully followed user!");
       }
     }
-
     return new ErrorFolio(true, "Maximum following reached!");
   }
 }

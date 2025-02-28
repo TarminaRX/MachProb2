@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import net.rnzonly.mtwo.listeners.FolioInitialized;
+import net.rnzonly.mtwo.utilities.JsonConverter;
 
 public class DataAccess {
   private Connection localcon = FolioInitialized.getMsqlcon();
@@ -54,6 +55,37 @@ public class DataAccess {
     return false;
   }
 
+  public ErrorFolio updateUser(String newUserName, String password, String uRole, String oldUserName) throws Exception{
+    ErrorFolio currError = new ErrorFolio(false, "Account successfully updated!");
+    if (!checkIfUserExists(oldUserName)) {
+      currError.isError(true);
+      currError.message("Account does not exist!");
+      return currError;
+    }
+
+    pst = localcon.prepareStatement("INSERT INTO account (user_name, password, user_role) VALUES (?, ?, ?)");
+    pst.setString(1, newUserName);
+    pst.setString(2, password);
+    pst.setString(3, uRole);
+    pst.executeUpdate();
+
+    pst = localcon.prepareStatement("update posts set user_name = ? where user_name = ?");
+    pst.setString(1, newUserName);
+    pst.setString(2, oldUserName);
+    pst.executeUpdate();
+
+    pst = localcon.prepareStatement("update follows set user_name = ? where user_name = ?");
+    pst.setString(1, newUserName);
+    pst.setString(2, oldUserName);
+    pst.executeUpdate();
+
+    pst = localcon.prepareStatement("delete from account where user_name = ?");
+    pst.setString(1, oldUserName);
+    pst.executeUpdate();
+
+    return currError;
+  }
+
   public FollowFolio getUserFollows(String uname) throws Exception {
     pst = localcon.prepareStatement("select * from follows WHERE user_name = ?");
     pst.setString(1, uname);
@@ -62,6 +94,54 @@ public class DataAccess {
     if (r.next()) {
       return new FollowFolio(r.getString("follow1"), r.getString("follow2"), r.getString("follow3"));
     }
+    return null;
+  }
+
+  public FollowFolio updateUserFollows(String uname, String ufName) throws Exception{
+    FollowFolio currentF = getUserFollows(uname);
+    String [] follows = currentF.toArray();
+
+    for (String follow : follows){
+      if(follow != null && follow.equalsIgnoreCase(ufName)){
+          return currentF;
+        }
+    }
+    for(int i = 0; i < follows.length; i++){
+      if(follows[i] == null){
+        currentF.followUser(ufName);
+        String column = "follow" + (i + 1);
+        pst = localcon.prepareStatement("update follows set " + column + " = ? where user_name = ?");
+        pst.setString(1, ufName);
+        pst.setString(2, uname);
+        pst.executeUpdate();
+        return currentF;
+      }
+    }
+    return null;
+  }
+
+  public FollowFolio removeUserFollow(String uname, String uFname) throws Exception{
+    FollowFolio currentF = getUserFollows(uname);
+    String [] follows = currentF.toArray();
+
+    for(int i = 0; i < follows.length; i++){ //Find position of user to be unfollowed
+      if(uFname.equalsIgnoreCase(follows[i])){
+        currentF.unfollowUser(uFname);
+        String column = "follow" + (i + 1);
+        pst = localcon.prepareStatement("update follows set " + column + " = null where user_name = ?");
+        pst.setString(1, uname);
+        pst.executeUpdate();
+        return currentF;
+      }
+    }
+    return null;
+  }
+  
+  public ErrorFolio deleteUser(String username) throws Exception{
+    pst = localcon.prepareStatement("delete from account where user_name = ?");
+    pst.setString(1, username);
+    pst.executeUpdate();
+
     return null;
   }
 
