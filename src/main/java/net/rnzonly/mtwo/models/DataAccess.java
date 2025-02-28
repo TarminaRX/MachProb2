@@ -212,6 +212,40 @@ public class DataAccess {
     return null;
   }
 
+  public PostFolio updatePost(String uname, String mess) throws Exception{
+    PostFolio posts = getUserPosts(uname);
+    String [] postsArray = posts.toArray();
+
+    for(int i = 0; i < postsArray.length; i++){ //Find position of user to be unfollowed
+      if(postsArray[i] == null){
+        posts.newPost(mess);
+        String column = "post" + (i + 1);
+        pst = localcon.prepareStatement("update posts set " + column + " = ? where user_name = ?");
+        pst.setString(1, mess);
+        pst.setString(2, uname);
+        pst.executeUpdate();
+        return posts;
+      }
+    }
+    return null;
+  }
+
+  public PostFolio deletePost(String uname, String mess) throws Exception{
+    PostFolio posts = getUserPosts(uname);
+    String [] postsArray = posts.toArray();
+    for(int i = 0; i < postsArray.length; i++){
+      if(mess.equalsIgnoreCase(postsArray[i])){
+        posts.deletePost(mess);
+        String column = "post" + (i + 1);
+        pst = localcon.prepareStatement("update posts set " + column + " = null where user_name = ?");
+        pst.setString(1, uname);
+        pst.executeUpdate();
+        return posts;
+      }
+    }
+    return null;
+  }
+
   public ErrorFolio credentialsExists(String uname, String password)
       throws Exception {
     ErrorFolio currError = new ErrorFolio(true, "");

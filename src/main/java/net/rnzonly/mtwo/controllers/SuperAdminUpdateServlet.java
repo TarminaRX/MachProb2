@@ -10,8 +10,8 @@ import net.rnzonly.mtwo.models.ErrorFolio;
 import net.rnzonly.mtwo.models.UserFolio;
 import net.rnzonly.mtwo.utilities.JsonConverter;
 
-@WebServlet("/api/post")
-class PostServlet extends TemplateServlet {
+@WebServlet("/api/Superupdate")
+class SuperAdminUpdateServlet extends TemplateServlet {
   private DataAccess da = new DataAccess();
 
   @Override
@@ -32,23 +32,34 @@ class PostServlet extends TemplateServlet {
     }
 
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
-    String action = request.getParameter("action");
-    String message = request.getParameter("message");
-
-    if (action == null || message == null) {
-      messageError = new ErrorFolio(true, "Malformed body request");
+    
+    if(!"super_admin".equalsIgnoreCase(currUser.user_role())){
+      messageError = new ErrorFolio(true, "You are not authorized to do this!");
       aba.print(JsonConverter.convertToJson(messageError));
       return;
     }
 
-    if (action.equals("create")) {
-      messageError = da.updateUserPosts(message, currUser);
-    } else if (action.equals("delete")) { 
-      messageError = da.removeUserPost(message, currUser);
-    } else {
-      messageError = new ErrorFolio(true, "Unknown action type!");
+    String uNametoUpdate = request.getParameter("user_change");
+    String password = request.getParameter("password");
+    String uRole = request.getParameter("user_role");
+    String userName = request.getParameter("user_name");
+
+    if (uNametoUpdate == null || uNametoUpdate.isEmpty() || password == null || password.isEmpty() ||
+        uRole == null || uRole.isEmpty() || userName == null || userName.isEmpty()) {
+        messageError = new ErrorFolio(true, "All fields are required!");
+        aba.print(JsonConverter.convertToJson(messageError));
+        return;
     }
+        messageError = da.updateUser(uNametoUpdate, password, uRole, userName);
+        if(messageError.isError() == false){
+            messageError = new ErrorFolio(false, "User updated successfully!");
+        }else{
+            messageError = new ErrorFolio(true, "Failed to udpate user. Try again");
+        }
+      
 
     aba.print(JsonConverter.convertToJson(messageError));
+
+    // aba.print(JsonConverter.convertToJson(rm));
   }
 }

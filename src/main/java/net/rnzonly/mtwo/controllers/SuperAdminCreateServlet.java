@@ -10,8 +10,8 @@ import net.rnzonly.mtwo.models.ErrorFolio;
 import net.rnzonly.mtwo.models.UserFolio;
 import net.rnzonly.mtwo.utilities.JsonConverter;
 
-@WebServlet("/api/post")
-class PostServlet extends TemplateServlet {
+@WebServlet("/api/Supercreate")
+class SuperAdminCreateServlet extends TemplateServlet {
   private DataAccess da = new DataAccess();
 
   @Override
@@ -32,23 +32,34 @@ class PostServlet extends TemplateServlet {
     }
 
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
-    String action = request.getParameter("action");
-    String message = request.getParameter("message");
-
-    if (action == null || message == null) {
-      messageError = new ErrorFolio(true, "Malformed body request");
+    
+    if(!"super_admin".equalsIgnoreCase(currUser.user_role())){
+      messageError = new ErrorFolio(true, "You are not authorized to do this!");
       aba.print(JsonConverter.convertToJson(messageError));
       return;
     }
 
-    if (action.equals("create")) {
-      messageError = da.updateUserPosts(message, currUser);
-    } else if (action.equals("delete")) { 
-      messageError = da.removeUserPost(message, currUser);
-    } else {
-      messageError = new ErrorFolio(true, "Unknown action type!");
-    }
+    String uNametoCreate = request.getParameter("user_name");
+    String password = request.getParameter("password");
+    String uRole = request.getParameter("user_role");
 
+    if(da.checkIfUserExists(uNametoCreate)){
+        messageError = new ErrorFolio(true, "User already exists!");
+        aba.print(JsonConverter.convertToJson(messageError));
+        return;
+      }else{
+        messageError = da.registerUser(uNametoCreate, password, uRole);
+        if(messageError.isError() == false){
+            messageError = new ErrorFolio(false, "User created successfully!");
+        }else{
+            messageError = new ErrorFolio(true, "User creation failed. User may already exist");
+        }
+      }
+
+    
+    
     aba.print(JsonConverter.convertToJson(messageError));
+
+    // aba.print(JsonConverter.convertToJson(rm));
   }
 }
