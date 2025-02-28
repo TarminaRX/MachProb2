@@ -126,6 +126,7 @@ public class DataAccess {
 
     for(int i = 0; i < follows.length; i++){ //Find position of user to be unfollowed
       if(uFname.equalsIgnoreCase(follows[i])){
+        currentF.unfollowUser(uFname);
         String column = "follow" + (i + 1);
         pst = localcon.prepareStatement("update follows set " + column + " = null where user_name = ?");
         pst.setString(1, uname);
