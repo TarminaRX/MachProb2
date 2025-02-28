@@ -59,7 +59,8 @@ public class UserFolio {
 enum UserRole {
   USER("user"),
   ADMIN("admin"),
-  SUPER_ADMIN("super_admin");
+  SUPER_ADMIN("super_admin"),
+  DELETED("deleted");
 
   private final String value;
 

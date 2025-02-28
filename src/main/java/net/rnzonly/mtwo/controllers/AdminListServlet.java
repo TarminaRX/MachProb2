@@ -35,7 +35,7 @@ class AdminListServlet extends TemplateServlet {
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
 
     if (!(currUser.user_role().contains("admin"))) {
-      messageError = new ErrorFolio(true, "You don't privilege for this!");
+      messageError = new ErrorFolio(true, "You don't have privilege for this!");
     } 
 
     UserFolio[] bbb = da.getAllUsersLite(currUser);

@@ -36,7 +36,7 @@ class AdminCreateServlet extends TemplateServlet {
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
 
     if (!(currUser.user_role().contains("admin"))) {
-      messageError = new ErrorFolio(true, "You don't privilege for this!");
+      messageError = new ErrorFolio(true, "You don't have privilege for this!");
     }
 
     String uNametoCreate = request.getParameter("user_name");
@@ -59,9 +59,6 @@ class AdminCreateServlet extends TemplateServlet {
     } else {
       messageError = da.registerUser(uNametoCreate, password, uRole);
     }
-
     aba.print(JsonConverter.convertToJson(messageError));
-
-    // aba.print(JsonConverter.convertToJson(rm));
   }
 }
