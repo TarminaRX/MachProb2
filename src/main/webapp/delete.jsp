@@ -45,7 +45,7 @@
 
             <!-- Users List with Checkboxes -->
             <div class="flex-1 overflow-y-auto custom-scrollbar">
-              <form action="api/test" method="POST" id="bulk-delete-form">
+              <form action="api/delete" method="POST" id="bulk-delete-form">
               </form>
             </div>
         </div>

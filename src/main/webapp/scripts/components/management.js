@@ -1,4 +1,5 @@
 import { BASE_URL_SITE } from '../globals.js';
+import axios from '../libs/axios.min.js';
 import van from '../libs/van-1.5.3.min.js';
 import { showPill, silentReload, sleepSec } from '../utilities/helper.js';
 import { requestForm } from '../utilities/submit.js';
@@ -202,18 +203,28 @@ export const AdminDeleteButton = () => {
       ),
     ),
     button({
-      onclick: /** @param {Event} event */ (event) => {
+      onclick: /** @param {Event} event */ async (event) => {
         event.preventDefault();
-        const deleteForm = /** @type {HTMLFormElement} */(document.getElementById("bulk-delete-form"));
-        requestForm(deleteForm, BASE_URL_SITE + "api/delete").then((res) => {
-          const resultInner = /** @type {ErrorFolio} */(res.data);
+        //const deleteForm = /** @type {HTMLFormElement} */(document.getElementById("bulk-delete-form"));
+        const checkboxes = /** @type {NodeListOf<HTMLInputElement>} */ (document.querySelectorAll('input[name="selected_users[]"]:checked'));
+        const params = new URLSearchParams();
+
+        checkboxes.forEach(checkbox => {
+          params.append('selected_users[]', checkbox.value);
+        });
+        axios.post(BASE_URL_SITE + "api/delete", params, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }).then((resp) => {
+          const resultInner = /** @type {ErrorFolio} */(resp.data);
           if (resultInner.isError === false) {
             showPill("successPill", resultInner.message);
             sleepSec(3).then(() => silentReload("result.jsp"));
           } else {
             showPill("errorPill", resultInner.message);
           }
-        });
+        }).catch((err) => console.log(err));
       }, type: "submit", class: "bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md text-sm transition"
     },
       "Delete Selected",

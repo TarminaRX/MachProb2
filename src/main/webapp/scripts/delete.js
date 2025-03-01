@@ -21,7 +21,6 @@ export const GetDeleteBlock = (urlStr) => {
     }
 
     const innerContainer = document.getElementById("bulk-delete-form");
-    van.add(innerContainer, AdminDeleteButton());
 
     getUserObject().then((resp) => {
       userName.val = resp.user_name;
@@ -31,6 +30,7 @@ export const GetDeleteBlock = (urlStr) => {
           const userCurrent = userObj[i];
           van.add(innerContainer, AdminDeleteUser(userCurrent.user_name, userCurrent.user_role.value));
         }
+        van.add(innerContainer, AdminDeleteButton());
       }).catch((err) => {
         console.log(err);
       });

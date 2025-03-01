@@ -14,6 +14,13 @@
     </head>
 
     <body class="dark:bg-neutral-900 w-dvw h-dvh flex flex-col items-center justify-center min-h-screen">
+      <script>
+        function toggleSidebar() {
+          const sidebar = document.getElementById("sidebar");
+          sidebar.classList.toggle("hidden");
+          sidebar.classList.toggle("lg:flex");
+        }
+      </script>
       <main class="w-full max-w-lg">
         <!--<div id="isLogged" class="hidden">-->
         <!--  ${sessionScope.currentUser != null ? "true" : "false"}-->
