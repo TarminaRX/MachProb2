@@ -37,6 +37,8 @@ class AdminCreateServlet extends TemplateServlet {
 
     if (!(currUser.user_role().contains("admin"))) {
       messageError = new ErrorFolio(true, "You don't have privilege for this!");
+      aba.print(JsonConverter.convertToJson(messageError));
+      return;
     }
 
     String uNametoCreate = request.getParameter("user_name");

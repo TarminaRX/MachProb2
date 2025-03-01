@@ -1,17 +1,19 @@
 package net.rnzonly.mtwo.controllers;
 
 import java.io.PrintWriter;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import net.rnzonly.mtwo.models.DataAccess;
 import net.rnzonly.mtwo.models.ErrorFolio;
 import net.rnzonly.mtwo.models.UserFolio;
 import net.rnzonly.mtwo.utilities.JsonConverter;
 
-@WebServlet("/api/Supercreate")
-class SuperAdminCreateServlet extends TemplateServlet {
+@WebServlet("/api/result")
+class AdminResultServlet extends TemplateServlet {
   private DataAccess da = new DataAccess();
 
   @Override
@@ -32,34 +34,26 @@ class SuperAdminCreateServlet extends TemplateServlet {
     }
 
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
-    
-    if(!"super_admin".equalsIgnoreCase(currUser.user_role())){
-      messageError = new ErrorFolio(true, "You are not authorized to do this!");
+    UserFolio[] bufMessage = new UserFolio[0];
+
+    if (!(currUser.user_role().contains("admin"))) {
+      messageError = new ErrorFolio(true, "You don't have privilege for this!");
       aba.print(JsonConverter.convertToJson(messageError));
       return;
-    }
+    } else if (sq.getAttribute("resultFolio") != null) {
+      bufMessage = (UserFolio[])sq.getAttribute("resultFolio");
+    } 
+    aba.print(JsonConverter.convertToJson(bufMessage));
+    sq.removeAttribute("resultFolio");
 
-    String uNametoCreate = request.getParameter("user_name");
-    String password = request.getParameter("password");
-    String uRole = request.getParameter("user_role");
-
-    if(da.checkIfUserExists(uNametoCreate)){
-        messageError = new ErrorFolio(true, "User already exists!");
-        aba.print(JsonConverter.convertToJson(messageError));
-        return;
-      }else{
-        messageError = da.registerUser(uNametoCreate, password, uRole);
-        if(messageError.isError() == false){
-            messageError = new ErrorFolio(false, "User created successfully!");
-        }else{
-            messageError = new ErrorFolio(true, "User creation failed. User may already exist");
-        }
-      }
-
-    
-    
-    aba.print(JsonConverter.convertToJson(messageError));
-
-    // aba.print(JsonConverter.convertToJson(rm));
+    // if ((uRole.equals("super_admin") && currUser.user_role().equals("admin"))
+    // || (uRole.equals("admin") && currUser.user_role().equals("admin"))) {
+    // messageError = new ErrorFolio(
+    // true, "You are not authorized to create this kind of user.");
+    // aba.print(JsonConverter.convertToJson(messageError));
+    // return;
+    // } else {
+    // messageError = da.registerUser(uNametoCreate, password, uRole);
+    // }
   }
 }

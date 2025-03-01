@@ -126,12 +126,18 @@ export const AdminUpdateBlock = (updateContents) => {
           const roleChanged = /** @type {HTMLInputElement} */ (document.getElementById(nameUser + "_role"));
 
           if (nameChanged.value.length !== 0 || passChanged.value.length !== 0 || roleChanged.value.length !== 0) {
-            await requestForm(currentForm, BASE_URL_SITE + rela)
-            counter++;
+            const resp = await requestForm(currentForm, BASE_URL_SITE + rela)
+            const resultInner = /** @type {ErrorFolio} */(resp.data);
+            if (resultInner.isError === false) {
+              counter++;
+            }
           }
         }
         if (counter >= 1) {
-          silentReload("result.jsp");
+          showPill("successPill", "Successfully updated " + counter + " users!");
+          sleepSec(3).then(() => silentReload("result.jsp"));
+        } else {
+          showPill("errorPill", "Didn't update any users!");
         }
       }, class: "w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-md transition"
     },
@@ -195,7 +201,21 @@ export const AdminDeleteButton = () => {
         "Select All",
       ),
     ),
-    button({ type: "submit", class: "bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md text-sm transition" },
+    button({
+      onclick: /** @param {Event} event */ (event) => {
+        event.preventDefault();
+        const deleteForm = /** @type {HTMLFormElement} */(document.getElementById("bulk-delete-form"));
+        requestForm(deleteForm, BASE_URL_SITE + "api/delete").then((res) => {
+          const resultInner = /** @type {ErrorFolio} */(res.data);
+          if (resultInner.isError === false) {
+            showPill("successPill", resultInner.message);
+            sleepSec(3).then(() => silentReload("result.jsp"));
+          } else {
+            showPill("errorPill", resultInner.message);
+          }
+        });
+      }, type: "submit", class: "bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md text-sm transition"
+    },
       "Delete Selected",
     ),
   )
@@ -233,3 +253,46 @@ export const AdminDeleteUser = (username, role) => {
   )
 }
 
+
+
+/**
+ * @param {string} username
+ * @param {string} pass
+ * @param {string} role
+ */
+export const AdminResultUser = (username, pass, role) => {
+  return div({ class: "mb-6 p-4 bg-neutral-800 rounded-lg" },
+    div({ class: "grid grid-cols-3 gap-4" },
+      div(
+        div({ class: "text-sm text-neutral-400" },
+          "Username",
+        ),
+        div({ class: "flex items-center" },
+          span(
+            username,
+          ),
+        ),
+      ),
+      div(
+        div({ class: "text-sm text-neutral-400" },
+          "Password",
+        ),
+        div({ class: "flex items-center" },
+          span(
+            pass,
+          ),
+        ),
+      ),
+      div(
+        div({ class: "text-sm text-neutral-400" },
+          "Role",
+        ),
+        div({ class: "flex items-center" },
+          span(
+            role,
+          ),
+        ),
+      ),
+    ),
+  )
+}

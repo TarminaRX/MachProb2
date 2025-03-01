@@ -1,10 +1,14 @@
 package net.rnzonly.mtwo.controllers;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import net.rnzonly.mtwo.models.DataAccess;
 import net.rnzonly.mtwo.models.ErrorFolio;
 import net.rnzonly.mtwo.models.UserFolio;
@@ -32,38 +36,46 @@ class AdminUpdateServlet extends TemplateServlet {
     }
 
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
-    
-    if(!"admin".equalsIgnoreCase(currUser.user_role())){
-      messageError = new ErrorFolio(true, "You are not authorized to do this!");
+
+    if (!(currUser.user_role().contains("admin"))) {
+      messageError = new ErrorFolio(true, "You don't have privilege for this!");
       aba.print(JsonConverter.convertToJson(messageError));
       return;
     }
 
-    String uNametoUpdate = request.getParameter("user_change");
+    String old_username = request.getParameter("old_user_name");
+    String user_name = request.getParameter("user_name");
+    String user_role = request.getParameter("user_role");
     String password = request.getParameter("password");
-    String uRole = request.getParameter("user_role");
-    String userName = request.getParameter("user_name");
+    
+    if (old_username == null || user_name == null || user_role == null || password == null) {
+      messageError = new ErrorFolio(true, "Malformed body request");
+      aba.print(JsonConverter.convertToJson(messageError));
+      return;
+    }
 
-    if (uNametoUpdate == null || uNametoUpdate.isEmpty() || password == null || password.isEmpty() ||
-        uRole == null || uRole.isEmpty() || userName == null || userName.isEmpty()) {
-        messageError = new ErrorFolio(true, "All fields are required!");
-        aba.print(JsonConverter.convertToJson(messageError));
-        return;
-    } 
-        if(uRole.equalsIgnoreCase("superadmin")){
-          messageError = new ErrorFolio(true, "You are not authorized to edit this user");
-          aba.print(JsonConverter.convertToJson(messageError));
-          return;
-        }else{
-          messageError = da.updateUser(uNametoUpdate, password, uRole, userName);
-          if(messageError.isError() == false){
-            messageError = new ErrorFolio(false, "User updated successfully!");
-          }else{
-            messageError = new ErrorFolio(true, "Failed to udpate user. Try again");
-          }
-        }
+    ArrayList<UserFolio> resultF = new ArrayList<>();
+    if (sq.getAttribute("resultFolio") != null) {
+      UserFolio[] bufArrayResult = (UserFolio[]) sq.getAttribute("resultFolio");
+      resultF = (ArrayList<UserFolio>)Arrays.asList(bufArrayResult);
+    }
+
+    messageError = da.updateUser(old_username, user_name, password, user_role, currUser);
+    if (messageError.isError() == false) {
+      resultF.add(da.cachedUser());
+      sq.removeAttribute("resultFolio");
+      sq.setAttribute("resultFolio", resultF.toArray(new UserFolio[0]));
+    }
     aba.print(JsonConverter.convertToJson(messageError));
 
-    // aba.print(JsonConverter.convertToJson(rm));
+
+    //if ((uRole.equals("super_admin") && currUser.user_role().equals("admin")) || (uRole.equals("admin") && currUser.user_role().equals("admin"))) {
+    //  messageError = new ErrorFolio(
+    //      true, "You are not authorized to create this kind of user.");
+    //  aba.print(JsonConverter.convertToJson(messageError));
+    //  return;
+    //} else {
+    //  messageError = da.registerUser(uNametoCreate, password, uRole);
+    //}
   }
 }

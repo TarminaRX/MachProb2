@@ -36,6 +36,8 @@ class AdminListServlet extends TemplateServlet {
 
     if (!(currUser.user_role().contains("admin"))) {
       messageError = new ErrorFolio(true, "You don't have privilege for this!");
+      aba.print(JsonConverter.convertToJson(messageError));
+      return;
     } 
 
     UserFolio[] bbb = da.getAllUsersLite(currUser);

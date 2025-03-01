@@ -3,7 +3,6 @@ package net.rnzonly.mtwo.models;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 
@@ -63,41 +62,37 @@ public class DataAccess {
     return false;
   }
 
-  public ErrorFolio updateUser(String newUserName, String password,
-                               String uRole, String oldUserName)
+  public ErrorFolio updateUser(String oldUserName, String newUserName,
+                               String newPassword, String newRole, UserFolio currUser)
       throws Exception {
-    ErrorFolio currError =
-        new ErrorFolio(false, "Account successfully updated!");
-    if (!checkIfUserExists(oldUserName)) {
-      currError.isError(true);
-      currError.message("Account does not exist!");
-      return currError;
+    ErrorFolio message = getUserLite(oldUserName);
+    if (message.isError()) {
+      return message;
+    } else if (newUserName.equals(currUser.user_name())) {
+      message = new ErrorFolio(true, "You can't rename user to yourself");
+      return message;
+    } else if (oldUserName.equals(currUser.user_name())) {
+      message = new ErrorFolio(true, "You can't update yourself");
+      return message;
     }
 
-    pst = localcon.prepareStatement("INSERT INTO account (user_name, "
-                                    + "password, user_role) VALUES (?, ?, ?)");
-    pst.setString(1, newUserName);
-    pst.setString(2, password);
-    pst.setString(3, uRole);
-    pst.executeUpdate();
+    if ((cachedUser.user_role().contains("admin") &&
+        !currUser.user_role().equals("super_admin")) || (newRole.contains("admin") && !currUser.user_role().equals("super_admin"))) {
+      message = new ErrorFolio(true, "You don't have privilege for this!");
+      return message;
+    }
 
-    pst = localcon.prepareStatement(
-        "update posts set user_name = ? where user_name = ?");
-    pst.setString(1, newUserName);
-    pst.setString(2, oldUserName);
-    pst.executeUpdate();
+    cachedUser.user_name((newUserName.length() != 0) ? newUserName : cachedUser.user_name());
+    cachedUser.password((newPassword.length() != 0) ? newPassword : cachedUser.password());
+    cachedUser.user_role((newRole.length() != 0) ? newRole : cachedUser.user_role());
 
-    pst = localcon.prepareStatement(
-        "update follows set user_name = ? where user_name = ?");
-    pst.setString(1, newUserName);
-    pst.setString(2, oldUserName);
+    pst = localcon.prepareStatement("update account set user_name = ?, password = ?, user_role = ? where user_name = ?");
+    pst.setString(1, cachedUser.user_name());
+    pst.setString(2, cachedUser.password());
+    pst.setString(3, cachedUser.user_role());
+    pst.setString(4, oldUserName);
     pst.executeUpdate();
-
-    pst = localcon.prepareStatement("delete from account where user_name = ?");
-    pst.setString(1, oldUserName);
-    pst.executeUpdate();
-
-    return currError;
+    return new ErrorFolio(false, "Successfully updated the user!");
   }
 
   public UserFolio[] getAllUsersLite(UserFolio curUser) throws Exception {
@@ -105,9 +100,9 @@ public class DataAccess {
       pst = localcon.prepareStatement(
           "SELECT * FROM account WHERE user_name != ?");
     } else {
-      pst = localcon.prepareStatement(
-          "SELECT * FROM account WHERE (user_role = "
-          + "'user') AND user_name != ?");
+      pst =
+          localcon.prepareStatement("SELECT * FROM account WHERE (user_role = "
+                                    + "'user') AND user_name != ?");
     }
     ArrayList<UserFolio> ufList = new ArrayList<>();
     pst.setString(1, curUser.user_name());
@@ -215,16 +210,44 @@ public class DataAccess {
     return currErr;
   }
 
-  public ErrorFolio deleteUser(String username) {
-    try {
-      pst =
-          localcon.prepareStatement("delete from account where user_name = ?");
-      pst.setString(1, username);
-      pst.executeUpdate();
-      return new ErrorFolio(false, "Successfully deleted user!");
-    } catch (SQLException er) {
-      return new ErrorFolio(true, er.toString());
+  public ErrorFolio getUserLite(String username) throws Exception {
+    if (!checkIfUserExists(username)) {
+      return new ErrorFolio(true, "Account does not exist!");
     }
+    pst =
+        localcon.prepareStatement("select * from account WHERE user_name = ?");
+    pst.setString(1, username);
+    ResultSet rs = pst.executeQuery();
+    if (rs.next()) {
+      cachedUser =
+          new UserFolio(rs.getString("user_name"), rs.getString("password"),
+                        rs.getString("user_role"), null, null);
+    }
+    return new ErrorFolio(false, "Retrieval was successful!");
+  }
+
+  public ErrorFolio deleteUser(String username, UserFolio currUser)
+      throws Exception {
+    ErrorFolio message = getUserLite(username);
+    if (message.isError()) {
+      return message;
+    } else if (username.equals(currUser.user_name())) {
+      message = new ErrorFolio(true, "You can't delete yourself");
+      return message;
+    }
+
+    if (cachedUser.user_role().contains("admin") &&
+        !currUser.user_role().equals("super_admin")) {
+      message = new ErrorFolio(true, "You don't have privilege for this!");
+      return message;
+    }
+
+    pst = localcon.prepareStatement("delete from account where user_name = ?");
+    pst.setString(1, username);
+    pst.executeUpdate();
+
+    message = new ErrorFolio(false, "Successfully deleted user!");
+    return message;
   }
 
   public PostFolio getUserPosts(String uname) throws Exception {

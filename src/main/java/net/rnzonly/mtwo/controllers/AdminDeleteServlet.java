@@ -1,10 +1,13 @@
 package net.rnzonly.mtwo.controllers;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import net.rnzonly.mtwo.models.DataAccess;
 import net.rnzonly.mtwo.models.ErrorFolio;
 import net.rnzonly.mtwo.models.UserFolio;
@@ -32,56 +35,52 @@ class AdminDeleteServlet extends TemplateServlet {
     }
 
     UserFolio currUser = (UserFolio)sq.getAttribute("currentUser");
-    if(!"admin".equalsIgnoreCase(currUser.user_role())){
-      messageError = new ErrorFolio(true, "You are not authorized to do this!");
+
+    if (!(currUser.user_role().contains("admin"))) {
+      messageError = new ErrorFolio(true, "You don't have privilege for this!");
       aba.print(JsonConverter.convertToJson(messageError));
       return;
     }
 
-    String action = request.getParameter("action");
-    String uNametoDelete = request.getParameter("user_name");
-    String uRole = request.getParameter("user_role");
-
-    if(uNametoDelete == null){
-      messageError = new ErrorFolio(true, "Invalid Username!");
-      aba.print(JsonConverter.convertToJson(messageError));
-      return;
-    }
-
-    if(currUser.user_name().equalsIgnoreCase(uNametoDelete)){
-      messageError = new ErrorFolio(true, "You cannot delete yourself!");
-      aba.print(JsonConverter.convertToJson(messageError));
-      return;
-    }
-
-    if("delete".equals(action)){
-      if(uRole.equalsIgnoreCase("superadmin")){
-        messageError = new ErrorFolio(true, "You are not authorized to edit this user");
-        aba.print(JsonConverter.convertToJson(messageError));
-        return;
-      }else{
-        if(da.checkIfUserExists(uNametoDelete)){
-          da.deleteUser(uNametoDelete);
-          messageError = new ErrorFolio(false, "User deleted successfully!");
-        }else if(!da.checkIfUserExists(uNametoDelete)){
-          messageError = new ErrorFolio(true, "User does not exist!");
-          aba.print(JsonConverter.convertToJson(messageError));
-          return;
-        }else{
-          messageError = new ErrorFolio(true, "Failed to delete");
-          aba.print(JsonConverter.convertToJson(messageError));
-          return;
-        }
-      }
-    }else{
-      messageError = new ErrorFolio(true, "Invalid Action!");
-      aba.print(JsonConverter.convertToJson(messageError));
-      return;
-    }
+    String[] uNametoCreate = request.getParameterValues("selected_users[]");
     
+    if (uNametoCreate == null || uNametoCreate.length == 0) {
+      messageError = new ErrorFolio(true, "Malformed body request");
+      aba.print(JsonConverter.convertToJson(messageError));
+      return;
+    }
+
+    int countDeleted = 0;
+    ArrayList<UserFolio> bufferResult = new ArrayList<>();
+    for (int i = 0; i < uNametoCreate.length; i++) {
+      String usernameDelete = uNametoCreate[i];
+      messageError = da.deleteUser(usernameDelete, currUser);
+      if (messageError.isError() == false) {
+        countDeleted++;
+        da.cachedUser().user_role("deleted");
+        da.cachedUser().password("deleted");
+        bufferResult.add(da.cachedUser());
+      }
+    }
+
+    if (countDeleted == 0) {
+      messageError = new ErrorFolio(true, "Didn't delete any user!");
+    } else {
+      messageError = new ErrorFolio(false, "Successfully deleted " + String.valueOf(countDeleted) + " users");
+      UserFolio[] resultFolio = bufferResult.toArray(new UserFolio[0]);
+      sq.setAttribute("resultFolio", resultFolio);
+    };
 
     aba.print(JsonConverter.convertToJson(messageError));
 
-    // aba.print(JsonConverter.convertToJson(rm));
+
+    //if ((uRole.equals("super_admin") && currUser.user_role().equals("admin")) || (uRole.equals("admin") && currUser.user_role().equals("admin"))) {
+    //  messageError = new ErrorFolio(
+    //      true, "You are not authorized to create this kind of user.");
+    //  aba.print(JsonConverter.convertToJson(messageError));
+    //  return;
+    //} else {
+    //  messageError = da.registerUser(uNametoCreate, password, uRole);
+    //}
   }
 }

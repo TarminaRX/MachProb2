@@ -44,6 +44,14 @@ declare global {
     user_name: string
     message: string
   }
+
+  type ResultContentLite = {
+    user_name: string
+    password: string
+    user_role: {
+      value: string
+    }
+  }
 }
 
 export { };
