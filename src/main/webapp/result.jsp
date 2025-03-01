@@ -46,7 +46,7 @@
             <!-- Results summary -->
             <div id="mainResults" class="flex-1 overflow-y-auto custom-scrollbar p-4">
             </div>
-        </div>
+
 
         </main>
         </div>

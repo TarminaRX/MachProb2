@@ -56,7 +56,7 @@
               <div id="supportMessages" class="space-y-4 overflow-y-auto" style="max-height: calc(50vh - 4rem);">
               </div>
             </div>
-        </div>
+
 
         </main>
         </div>

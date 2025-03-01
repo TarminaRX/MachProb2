@@ -43,9 +43,6 @@
               <div class="w-6"></div>
             </header>
 
-            <!-- User Creation Form -->
-        </div>
-
         </main>
         </div>
 
