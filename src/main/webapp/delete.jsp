@@ -48,10 +48,9 @@
               <form action="api/delete" method="POST" id="bulk-delete-form">
               </form>
             </div>
-        </div>
+          </main>
+          </div>
 
-        </main>
-        </div>
 
         <!-- Modern pill-style footer -->
         <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-20">
