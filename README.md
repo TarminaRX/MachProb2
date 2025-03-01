@@ -11,3 +11,4 @@ LINK TO VIDEO PRESENTATION: [GOOGLE DRIVE](https://drive.google.com/drive/folder
 # DATABASE SETUP
 - Database setup is on docker-compose.yml
 and as well as database/schema.sql
+- Initialized database on listeners/FolioInitialized.java
