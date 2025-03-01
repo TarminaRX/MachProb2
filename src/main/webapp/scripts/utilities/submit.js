@@ -1,6 +1,7 @@
 import { GetAdminBlock } from '../admin.js';
 import { GetCreateBlock } from '../create.js';
 import { GetDeleteBlock } from '../delete.js';
+import { BASE_URL_SITE } from '../globals.js';
 import { GetHelpBlock } from '../help.js';
 import { GetLandingBlock } from '../landing.js';
 import { default as axios } from '../libs/axios.min.js';
@@ -10,6 +11,7 @@ import { GetResultBlock } from '../result.js';
 import { GetSignupBlock } from '../signup.js';
 import { GetUpdateBlock } from '../update.js';
 import { GetUsersBlock } from '../users.js';
+import { silentReload } from './helper.js';
 import { SessionValid } from './session.js';
 /**
  * @param {HTMLFormElement} mainForm
@@ -77,6 +79,12 @@ export function updateLastPathSegment(newValue) {
  */
 export function refreshPage(lStr) {
   //SessionValid(lStr);
+  axios.get(BASE_URL_SITE + "api/exist").then((resp) => {
+    const messageError = /** @type {ErrorFolio} */ (resp.data);
+    if(messageError.message.includes("does not exist")) {
+      silentReload("login.jsp");
+    }
+  }).catch((err) => console.log(err)) ;
   GetLoginBlock(lStr);
   GetSignupBlock(lStr);
   GetLandingBlock(lStr);
