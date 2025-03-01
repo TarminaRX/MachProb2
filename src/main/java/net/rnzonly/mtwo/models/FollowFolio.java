@@ -15,26 +15,43 @@ public class FollowFolio {
     follow3 = null;
   }
 
-  public String[] toArray() { 
+  public String[] toArray() {
     String[] buf = {follow1, follow2, follow3};
     return buf;
   }
 
   public ErrorFolio unfollowUser(String username) {
-    ErrorFolio er = new ErrorFolio(true, "You don't follow this user!");
-
-    if (follow1.equalsIgnoreCase(username) ||
-        follow2.equalsIgnoreCase(username) ||
-        follow3.equalsIgnoreCase(username)) {
-      follow1 = (follow1.equalsIgnoreCase(username)) ? null : follow1;
-      follow2 = (follow2.equalsIgnoreCase(username)) ? null : follow2;
-      follow3 = (follow3.equalsIgnoreCase(username)) ? null : follow3;
-
-      er.isError(false);
-      er.message("Successfully unfollowed user!");
+    if (username == null) {
+      return new ErrorFolio(true, "Username cannot be null!");
     }
 
-    return er;
+    String normalizedUsername = username.trim();
+    if (normalizedUsername.isEmpty()) {
+      return new ErrorFolio(true, "Username cannot be empty!");
+    }
+
+    boolean wasFollowing = false;
+
+    String[] follows = {follow1, follow2, follow3};
+
+    for (int i = 0; i < follows.length; i++) {
+      if (follows[i] != null &&
+          follows[i].equalsIgnoreCase(normalizedUsername)) {
+        follows[i] = null;
+        wasFollowing = true;
+        break;
+      }
+    }
+
+    follow1 = follows[0];
+    follow2 = follows[1];
+    follow3 = follows[2];
+
+    if (!wasFollowing) {
+      return new ErrorFolio(true, "You don't follow this user!");
+    }
+
+    return new ErrorFolio(false, "Successfully unfollowed user!");
   }
 
   public ErrorFolio followUser(String username) {
@@ -43,15 +60,15 @@ public class FollowFolio {
     for (int i = 0; i < follows.length; i++) {
       if (follows[i] == null) {
         switch (i) {
-          case 0:
-            follow1 = username;
-            break;
-          case 1:
-            follow2 = username;
-            break;
-          case 2:
-            follow3 = username;
-            break;
+        case 0:
+          follow1 = username;
+          break;
+        case 1:
+          follow2 = username;
+          break;
+        case 2:
+          follow3 = username;
+          break;
         }
         return new ErrorFolio(false, "Successfully followed user!");
       } else if (follows[i].equals(username)) {
