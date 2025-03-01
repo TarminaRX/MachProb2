@@ -1,5 +1,7 @@
+import { BASE_URL_SITE } from '../globals.js';
+import { default as axios } from '../libs/axios.min.js';
 import van from '../libs/van-1.5.3.min.js';
-import { silentReload } from '../utilities/helper.js';
+import { showPill, silentReload, sleepSec } from '../utilities/helper.js';
 import { getUserObject } from '../utilities/session.js';
 const { aside, div, button, nav, a, span } = van.tags;
 const { circle, path, svg } = van.tags("http://www.w3.org/2000/svg");
@@ -17,11 +19,22 @@ export const AsideBlock = (username, select_mode) => {
     ),
     // navigation
     NavBar(select_mode),
-    // post button
-    button({ onclick: () => silentReload("profile.jsp"), class: "mt-6 w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full transition" },
-      "Post",
-    ),
     div({ class: "flex-1" }),
+    // logout button
+    button({ onclick: () => {
+      axios.get(BASE_URL_SITE + "api/logout").then((response) => {
+        const resultInner = /** @type {ErrorFolio} */ (response.data);
+        if (resultInner.isError === false) {
+          showPill("successPill", resultInner.message);
+          sleepSec(3).then(() => silentReload("login.jsp"));
+        } else {
+          showPill("errorPill", resultInner.message);
+          sleepSec(3).then(() => silentReload("login.jsp"));
+        }
+      }).catch((err) => console.log(err));
+    }, class: "mt-6 w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full transition" },
+      "Logout",
+    ),
     //username
     div({ class: "mt-auto border-t border-neutral-800 pt-4" },
       SideBarUser(username)
@@ -46,7 +59,18 @@ export const AdminAsideBlock = (username, select_mode) => {
     // post button
     
     div({ class: "flex-1" }),
-    button({ class: "mt-6 w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full transition" },
+    button({ onclick: () => {
+      axios.get(BASE_URL_SITE + "api/logout").then((response) => {
+        const resultInner = /** @type {ErrorFolio} */ (response.data);
+        if (resultInner.isError === false) {
+          showPill("successPill", resultInner.message);
+          sleepSec(3).then(() => silentReload("login.jsp"));
+        } else {
+          showPill("errorPill", resultInner.message);
+          sleepSec(3).then(() => silentReload("login.jsp"));
+        }
+      }).catch((err) => console.log(err));
+    }, class: "mt-6 w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full transition" },
       "Logout",
     ),
     //username
@@ -252,7 +276,7 @@ const NavBar = (selected_node) => {
     case "users":
       unav = true;
       break;
-    case "henav":
+    case "help":
       henav = true;
       break;
   }

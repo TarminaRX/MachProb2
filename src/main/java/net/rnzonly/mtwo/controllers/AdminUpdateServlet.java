@@ -3,12 +3,10 @@ package net.rnzonly.mtwo.controllers;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import net.rnzonly.mtwo.models.DataAccess;
 import net.rnzonly.mtwo.models.ErrorFolio;
 import net.rnzonly.mtwo.models.UserFolio;
@@ -47,35 +45,42 @@ class AdminUpdateServlet extends TemplateServlet {
     String user_name = request.getParameter("user_name");
     String user_role = request.getParameter("user_role");
     String password = request.getParameter("password");
-    
-    if (old_username == null || user_name == null || user_role == null || password == null) {
+
+    if (old_username == null || user_name == null || user_role == null ||
+        password == null) {
       messageError = new ErrorFolio(true, "Malformed body request");
       aba.print(JsonConverter.convertToJson(messageError));
       return;
     }
 
     ArrayList<UserFolio> resultF = new ArrayList<>();
-    if (sq.getAttribute("resultFolio") != null) {
-      UserFolio[] bufArrayResult = (UserFolio[]) sq.getAttribute("resultFolio");
-      resultF = (ArrayList<UserFolio>)Arrays.asList(bufArrayResult);
-    }
+    synchronized (sq) { // Synchronize on the session object
+      if (sq.getAttribute("resultFolio") != null) {
+        UserFolio[] bufArrayResult =
+            (UserFolio[])sq.getAttribute("resultFolio");
+        resultF = new ArrayList<>(Arrays.asList(
+            bufArrayResult)); // Create new ArrayList instead of direct casting
+      }
 
-    messageError = da.updateUser(old_username, user_name, password, user_role, currUser);
-    if (messageError.isError() == false) {
-      resultF.add(da.cachedUser());
-      sq.removeAttribute("resultFolio");
-      sq.setAttribute("resultFolio", resultF.toArray(new UserFolio[0]));
+      messageError =
+          da.updateUser(old_username, user_name, password, user_role, currUser);
+
+      if (!messageError.isError()) {
+        resultF.add(da.cachedUser());
+        sq.removeAttribute("resultFolio");
+        sq.setAttribute("resultFolio", resultF.toArray(new UserFolio[0]));
+      }
     }
     aba.print(JsonConverter.convertToJson(messageError));
 
-
-    //if ((uRole.equals("super_admin") && currUser.user_role().equals("admin")) || (uRole.equals("admin") && currUser.user_role().equals("admin"))) {
-    //  messageError = new ErrorFolio(
-    //      true, "You are not authorized to create this kind of user.");
-    //  aba.print(JsonConverter.convertToJson(messageError));
-    //  return;
-    //} else {
-    //  messageError = da.registerUser(uNametoCreate, password, uRole);
-    //}
+    // if ((uRole.equals("super_admin") && currUser.user_role().equals("admin"))
+    // || (uRole.equals("admin") && currUser.user_role().equals("admin"))) {
+    // messageError = new ErrorFolio(
+    // true, "You are not authorized to create this kind of user.");
+    // aba.print(JsonConverter.convertToJson(messageError));
+    // return;
+    // } else {
+    // messageError = da.registerUser(uNametoCreate, password, uRole);
+    // }
   }
 }

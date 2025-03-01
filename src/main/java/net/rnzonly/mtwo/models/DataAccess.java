@@ -148,12 +148,18 @@ public class DataAccess {
 
   public ErrorFolio updateUserFollows(String uname, UserFolio curUser)
       throws Exception {
-    if (checkIfUserExists(uname) == false) {
-      return new ErrorFolio(true, "The user does not exist!");
+    ErrorFolio currErr = getUserLite(uname);
+    if (currErr.isError()) {
+      return currErr;
     } else if (uname.equals(curUser.user_name())) {
-      return new ErrorFolio(true, "You can't follow yourself!");
+      currErr = new ErrorFolio(true, "You can't delete yourself");
+      return currErr;
+    } else if (cachedUser.user_role().contains("admin")) {
+      currErr = new ErrorFolio(true, "You can't follow admins!");
+      return currErr;
     }
-    ErrorFolio currErr = curUser.follows().followUser(uname);
+    
+    currErr = curUser.follows().followUser(uname); 
     if (currErr.isError()) {
       return currErr;
     }
