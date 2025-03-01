@@ -16,7 +16,9 @@ CREATE TABLE posts (
     post3 VARCHAR(200),
     post4 VARCHAR(200),
     post5 VARCHAR(200),
-    FOREIGN KEY (user_name) REFERENCES account(user_name) ON DELETE CASCADE
+    FOREIGN KEY (user_name) REFERENCES account(user_name) 
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 );
 
 
@@ -26,7 +28,18 @@ CREATE TABLE follows (
     follow1 VARCHAR(50),
     follow2 VARCHAR(50),
     follow3 VARCHAR(50),
-    FOREIGN KEY (user_name) REFERENCES account(user_name) ON DELETE CASCADE
+    FOREIGN KEY (user_name) REFERENCES account(user_name) 
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (follow1) REFERENCES account(user_name) 
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (follow2) REFERENCES account(user_name) 
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (follow3) REFERENCES account(user_name) 
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 );
 
 
